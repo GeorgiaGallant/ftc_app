@@ -139,6 +139,8 @@ public class TeleOp extends OpMode  {
 
     }
 
+    boolean armOut=false;
+    boolean armPressed=false;
     /*
      * This method will be called repeatedly in a loop
      *
@@ -183,8 +185,13 @@ public class TeleOp extends OpMode  {
         mR3.setPower(right);
         // mR4.setPower(right);
 
-
-
+        if(gamepad1.a) armPressed = true;
+        if(!gamepad1.a && armPressed) {
+            armPressed = false;
+            armOut = !armOut;
+            if(armOut) arm.setPosition(0.0);
+            else arm.setPosition(1.0);
+        }
 
 
         // update the position of the arm
