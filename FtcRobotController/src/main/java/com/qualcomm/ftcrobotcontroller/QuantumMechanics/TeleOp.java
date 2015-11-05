@@ -189,8 +189,8 @@ public class TeleOp extends OpMode  {
         if(!gamepad1.a && armPressed) {
             armPressed = false;
             armOut = !armOut;
-            if(armOut) arm.setPosition(0.0);
-            else arm.setPosition(1.0);
+            if(armOut) arm.setPosition(1.0);
+            else arm.setPosition(0.0);
         }
 
 
