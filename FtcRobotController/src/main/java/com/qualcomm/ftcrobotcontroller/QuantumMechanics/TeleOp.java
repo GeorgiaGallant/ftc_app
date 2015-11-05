@@ -185,6 +185,10 @@ public class TeleOp extends OpMode  {
         mR3.setPower(right);
         // mR4.setPower(right);
 
+
+        //Zipclimber arm
+        //when button(a) is pushed, toggle arm
+        //test position values!
         if(gamepad1.a) armPressed = true;
         if(!gamepad1.a && armPressed) {
             armPressed = false;
@@ -192,6 +196,7 @@ public class TeleOp extends OpMode  {
             if(armOut) arm.setPosition(1.0);
             else arm.setPosition(0.0);
         }
+
 
 
         // update the position of the arm
