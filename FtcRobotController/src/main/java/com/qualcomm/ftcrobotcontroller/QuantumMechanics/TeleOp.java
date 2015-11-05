@@ -35,13 +35,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
-
 /**
  * TeleOp Mode
  * <p>
  * Enables control of the robot via the gamepad
  */
-public class TeleOp extends OpMode {
+public class TeleOp extends OpMode  {
 
     /*
      * Note: the configuration of the servos is such that
@@ -53,6 +52,7 @@ public class TeleOp extends OpMode {
     final static double ARM_MAX_RANGE  = 0.90;
     final static double CLAW_MIN_RANGE  = 0.20;
     final static double CLAW_MAX_RANGE  = 0.7;
+
 
     // position of the arm servo.
     double armPosition;
@@ -125,14 +125,18 @@ public class TeleOp extends OpMode {
         mR2.setDirection(DcMotor.Direction.REVERSE);
         mR3.setDirection(DcMotor.Direction.REVERSE);
         // mR4.setDirection(DcMotor.Direction.REVERSE);
-
-
-        //	arm = hardwareMap.servo.get("servo_1");
+        //Servo servo1;
+       // servo1 = hardwareMap.servo.get("servozip");
+        double servo1Position;
+        	arm = hardwareMap.servo.get("servozip");
         //	claw = hardwareMap.servo.get("servo_6");
 
         // assign the starting position of the wrist and claw
         armPosition = 0.2;
         clawPosition = 0.2;
+       // servo1.setPosition(0);
+       // servo1.setPosition(.8);
+
     }
 
     /*
@@ -158,6 +162,7 @@ public class TeleOp extends OpMode {
         float direction = gamepad1.right_stick_x;
         float right = throttle - direction;
         float left = throttle + direction;
+
 
         // clip the right/left values so that the values never exceed +/- 1
         right = Range.clip(right, -1, 1);
@@ -185,11 +190,11 @@ public class TeleOp extends OpMode {
         // update the position of the arm
 
         // clip the position values so that they never exceed their allowed range.
-//        armPosition = Range.clip(armPosition, ARM_MIN_RANGE, ARM_MAX_RANGE);
+        armPosition = Range.clip(armPosition, ARM_MIN_RANGE, ARM_MAX_RANGE);
 //        clawPosition = Range.clip(clawPosition, CLAW_MIN_RANGE, CLAW_MAX_RANGE);
 
         // write position values to the wrist and claw servo
-//		arm.setPosition(armPosition);
+		arm.setPosition(armPosition);
 //		claw.setPosition(clawPosition);
 
 
@@ -201,7 +206,7 @@ public class TeleOp extends OpMode {
 		 * are currently write only.
 		 */
         telemetry.addData("Text", "*** Robot Data***");
-        //    telemetry.addData("arm", "arm:  " + String.format("%.2f", armPosition));
+            telemetry.addData("arm", "arm:  " + String.format("%.2f", armPosition));
         //   telemetry.addData("claw", "claw:  " + String.format("%.2f", clawPosition));
         telemetry.addData("left tgt pwr",  "left  pwr: " + String.format("%.2f", left));
         telemetry.addData("right tgt pwr", "right pwr: " + String.format("%.2f", right));
