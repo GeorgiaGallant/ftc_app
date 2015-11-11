@@ -56,6 +56,7 @@ public class TeleOp extends OpMode  {
 
     // position of the arm servo.
     double armPosition;
+    double spoolPosition;
 
     // amount to change the arm servo position.
     double armDelta = 0.1;
@@ -75,7 +76,7 @@ public class TeleOp extends OpMode  {
     DcMotor mR3;
     // DcMotor mR4;
 
-    Servo claw;
+    Servo spool;
     Servo arm;
 
     /**
@@ -129,18 +130,22 @@ public class TeleOp extends OpMode  {
        // servo1 = hardwareMap.servo.get("servozip");
         double servo1Position;
         	arm = hardwareMap.servo.get("servozip");
+            spool = hardwareMap.servo.get("spool");
         //	claw = hardwareMap.servo.get("servo_6");
 
         // assign the starting position of the wrist and claw
-        armPosition = 0.2;
-        clawPosition = 0.2;
+        arm.setPosition(.95);
+        spool.setPosition(1);
        // servo1.setPosition(0);
        // servo1.setPosition(.8);
 
-    }
 
+    }
+    //got some booleans that may or may not be used
     boolean armOut=false;
     boolean armPressed=false;
+    boolean armHold = false;
+
     /*
      * This method will be called repeatedly in a loop
      *
@@ -148,6 +153,7 @@ public class TeleOp extends OpMode  {
      */
     @Override
     public void loop() {
+
 
 		/*
 		 * Gamepad 1
@@ -189,13 +195,43 @@ public class TeleOp extends OpMode  {
         //Zipclimber arm
         //when button(a) is pushed, toggle arm
         //test position values!
-        if(gamepad1.a) armPressed = true;
-        if(!gamepad1.a && armPressed) {
+       /* if(gamepad2.a) armPressed = true;
+        if(gamepad2.a==false && armPressed==true) {
             armPressed = false;
-            armOut = !armOut;
-            if(armOut) arm.setPosition(0.8);
+            armOut = true;
+            if(armOut==true) arm.setPosition(0.92);
             else arm.setPosition(0.0);
+        } */
+
+        //
+
+       if(gamepad1.a) {
+            arm.setPosition(0.4);
+           telemetry.addData("button a pressed", " ");
         }
+        else {
+           arm.setPosition(.95);
+        }
+        if(gamepad1.b) {
+            spool.setPosition(0.0);
+        }
+        else {
+            spool.setPosition(1);
+        }
+
+
+//        if(gamepad2.a) armHold = true;
+//        if(armHold==true) arm.setPosition(0.92);
+//        if(armHold==false) arm.setPosition(0.0);
+
+
+
+
+
+
+
+
+
 
 
 
@@ -206,7 +242,7 @@ public class TeleOp extends OpMode  {
 //        clawPosition = Range.clip(clawPosition, CLAW_MIN_RANGE, CLAW_MAX_RANGE);
 
         // write position values to the wrist and claw servo
-		arm.setPosition(armPosition);
+		//arm.setPosition(armPosition);
 //		claw.setPosition(clawPosition);
 
 
@@ -219,6 +255,8 @@ public class TeleOp extends OpMode  {
 		 */
         telemetry.addData("Text", "*** Robot Data***");
             telemetry.addData("arm", "arm:  " + String.format("%.2f", armPosition));
+        telemetry.addData("spool", "spool:  " + String.format("%.2f", spoolPosition));
+
         //   telemetry.addData("claw", "claw:  " + String.format("%.2f", clawPosition));
         telemetry.addData("left tgt pwr",  "left  pwr: " + String.format("%.2f", left));
         telemetry.addData("right tgt pwr", "right pwr: " + String.format("%.2f", right));
