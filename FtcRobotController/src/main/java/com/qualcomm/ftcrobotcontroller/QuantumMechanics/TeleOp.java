@@ -57,6 +57,7 @@ public class TeleOp extends OpMode  {
     // position of the arm servo.
     double armPosition;
     double spoolPosition;
+    double climbersPosition;
 
     // amount to change the arm servo position.
     double armDelta = 0.1;
@@ -69,16 +70,17 @@ public class TeleOp extends OpMode  {
 
     DcMotor mL1;
     DcMotor mL2;
-    DcMotor mL3;
+   // DcMotor mL3;
     // DcMotor mL4;
     DcMotor mR1;
     DcMotor mR2;
-    DcMotor mR3;
+  //  DcMotor mR3;
     // DcMotor mR4;
 
     Servo spool;
     Servo arm;
-
+    Servo climbers;
+    Servo pinion;
     /**
      * Constructor
      */
@@ -114,28 +116,34 @@ public class TeleOp extends OpMode  {
 
         mL1 = hardwareMap.dcMotor.get("mL1");
         mL2 = hardwareMap.dcMotor.get("mL2");
-        mL3 = hardwareMap.dcMotor.get("mL3");
+      //  mL3 = hardwareMap.dcMotor.get("mL3");
         // mL4 = hardwareMap.dcMotor.get("mL4");
         mR1 = hardwareMap.dcMotor.get("mR1");
         mR2 = hardwareMap.dcMotor.get("mR2");
-        mR3 = hardwareMap.dcMotor.get("mR3");
+     //   mR3 = hardwareMap.dcMotor.get("mR3");
         // mR4 = hardwareMap.dcMotor.get("mR4");
 
 
         mR1.setDirection(DcMotor.Direction.REVERSE);
-        mR2.setDirection(DcMotor.Direction.REVERSE);
-        mR3.setDirection(DcMotor.Direction.REVERSE);
+        mL1.setDirection(DcMotor.Direction.REVERSE);
+        mL2.setDirection(DcMotor.Direction.REVERSE);
+      //  mR3.setDirection(DcMotor.Direction.REVERSE);
         // mR4.setDirection(DcMotor.Direction.REVERSE);
         //Servo servo1;
        // servo1 = hardwareMap.servo.get("servozip");
         double servo1Position;
         	arm = hardwareMap.servo.get("servozip");
             spool = hardwareMap.servo.get("spool");
+            climbers = hardwareMap.servo.get("climbers");
+            pinion = hardwareMap.servo.get("pinion");
+
         //	claw = hardwareMap.servo.get("servo_6");
 
         // assign the starting position of the wrist and claw
-        arm.setPosition(.95);
+        arm.setPosition(0);
         spool.setPosition(1);
+        climbers.setPosition(0);
+        pinion.setPosition(0);
        // servo1.setPosition(0);
        // servo1.setPosition(.8);
 
@@ -153,7 +161,6 @@ public class TeleOp extends OpMode  {
      */
     @Override
     public void loop() {
-
 
 		/*
 		 * Gamepad 1
@@ -184,11 +191,11 @@ public class TeleOp extends OpMode  {
         // write the values to the motors
         mL1.setPower(left);
         mL2.setPower(left);
-        mL3.setPower(left);
+      //  mL3.setPower(left);
         //  mL4.setPower(left);
         mR1.setPower(right);
         mR2.setPower(right);
-        mR3.setPower(right);
+      //  mR3.setPower(right);
         // mR4.setPower(right);
 
         //
@@ -205,20 +212,33 @@ public class TeleOp extends OpMode  {
 
         //
 
-       if(gamepad1.a) {
-            arm.setPosition(0.4);
+       if(gamepad2.left_bumper) {
+            arm.setPosition(0.6);
            telemetry.addData("button a pressed", " ");
         }
         else {
-           arm.setPosition(.95);
-        }
-        if(gamepad1.b) {
+           arm.setPosition(0);
+       }
+        if(gamepad2.right_bumper) {
             spool.setPosition(0.0);
         }
         else {
             spool.setPosition(1);
         }
 
+        if(gamepad2.a) {
+            climbers.setPosition(0.6);
+            telemetry.addData("button a pressed", " ");
+        }
+        else {
+            climbers.setPosition(0);
+        }
+        if(gamepad2.b){
+            pinion.setPosition(1);
+        }
+        else{
+            pinion.setPosition(0);
+        }
 
 //        if(gamepad2.a) armHold = true;
 //        if(armHold==true) arm.setPosition(0.92);
