@@ -74,6 +74,7 @@ public class TeleOp extends OpMode  {
     // DcMotor mL4;
     DcMotor mR1;
     DcMotor mR2;
+    DcMotor elevator;
   //  DcMotor mR3;
     // DcMotor mR4;
 
@@ -120,6 +121,7 @@ public class TeleOp extends OpMode  {
         // mL4 = hardwareMap.dcMotor.get("mL4");
         mR1 = hardwareMap.dcMotor.get("mR1");
         mR2 = hardwareMap.dcMotor.get("mR2");
+        elevator = hardwareMap.dcMotor.get("elevator");
      //   mR3 = hardwareMap.dcMotor.get("mR3");
         // mR4 = hardwareMap.dcMotor.get("mR4");
 
@@ -183,10 +185,12 @@ public class TeleOp extends OpMode  {
         right = Range.clip(right, -1, 1);
         left = Range.clip(left, -1, 1);
 
+
         // scale the joystick value to make it easier to control
         // the robot more precisely at slower speeds.
         right = (float)scaleInput(right);
         left =  (float)scaleInput(left);
+
 
         // write the values to the motors
         mL1.setPower(left);
@@ -211,7 +215,12 @@ public class TeleOp extends OpMode  {
         } */
 
         //
-
+        if(gamepad2.y) {
+            elevator.setPower(1);
+        }
+        else{
+            elevator.setPower(0);
+        }
        if(gamepad2.left_bumper) {
             arm.setPosition(0.6);
            telemetry.addData("button a pressed", " ");
