@@ -145,7 +145,7 @@ public class TeleOp extends OpMode  {
         arm.setPosition(0);
         spool.setPosition(1);
         climbers.setPosition(0);
-        pinion.setPosition(0);
+        pinion.setPosition(.493);
        // servo1.setPosition(0);
        // servo1.setPosition(.8);
 
@@ -193,12 +193,12 @@ public class TeleOp extends OpMode  {
 
 
         // write the values to the motors
-        mL1.setPower(left);
-        mL2.setPower(left);
+        mL1.setPower(right);
+        mL2.setPower(right);
       //  mL3.setPower(left);
         //  mL4.setPower(left);
-        mR1.setPower(right);
-        mR2.setPower(right);
+        mR1.setPower(left);
+        mR2.setPower(left);
       //  mR3.setPower(right);
         // mR4.setPower(right);
 
@@ -236,17 +236,17 @@ public class TeleOp extends OpMode  {
         }
 
         if(gamepad2.a) {
-            climbers.setPosition(0.6);
+            climbers.setPosition(1);
             telemetry.addData("button a pressed", " ");
         }
         else {
-            climbers.setPosition(0);
+            climbers.setPosition(.1);
         }
         if(gamepad2.b){
             pinion.setPosition(1);
         }
         else{
-            pinion.setPosition(0);
+            pinion.setPosition(.35);
         }
 
 //        if(gamepad2.a) armHold = true;

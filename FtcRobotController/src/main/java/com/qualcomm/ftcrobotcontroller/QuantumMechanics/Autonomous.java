@@ -2,6 +2,7 @@ package com.qualcomm.ftcrobotcontroller.QuantumMechanics;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 //TEST//
 /**
  * Created by student on 10/13/15.
@@ -9,6 +10,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 public class Autonomous extends LinearOpMode {
+    Servo climbers;
+    Servo pinion;
 
     DcMotor mL1;
     DcMotor mL2;
@@ -23,7 +26,8 @@ public class Autonomous extends LinearOpMode {
 
 
     private void driveTicks(double power, int ticks) throws InterruptedException{
-
+        climbers = hardwareMap.servo.get("climbers");
+        pinion = hardwareMap.servo.get("pinion");
         power = Math.abs(power); // Make sure power is positive
         if (ticks < 0) power *= -1;
         ticks = Math.abs(ticks);
@@ -116,6 +120,16 @@ public class Autonomous extends LinearOpMode {
 
 
         waitForStart();
+//get to bucket
+        //go up
+
+
+//dumbs climbers
+        climbers.setPosition(.1);
+        sleep(1000);
+        climbers.setPosition(1);
+        sleep(1000);
+
 
         driveTicks(.5, -2000);
         sleep(200);
