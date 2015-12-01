@@ -33,7 +33,6 @@ package com.qualcomm.ftcrobotcontroller.QuantumMechanics;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 /**
  * TeleOp Mode
@@ -55,7 +54,7 @@ public class TeleOp extends OpMode  {
 
 
     // position of the arm servo.
-    double armPosition;
+//    double armPosition;
     double spoolPosition;
     double climbersPosition;
 
@@ -69,19 +68,27 @@ public class TeleOp extends OpMode  {
     double clawDelta = 0.1;
 
     DcMotor mL1;
-    DcMotor mL2;
+ //   DcMotor mL2;
    // DcMotor mL3;
     // DcMotor mL4;
     DcMotor mR1;
-    DcMotor mR2;
-    DcMotor elevator;
+ //   DcMotor mR2;
+  //  DcMotor elevator; //here
+ //   DcMotor nom;//here
   //  DcMotor mR3;
     // DcMotor mR4;
 
-    Servo spool;
-    Servo arm;
-    Servo climbers;
-    Servo pinion;
+//    Servo spool;
+////    Servo arm;
+//    Servo climbers;
+//    Servo pinion;
+//
+//    //westley servos
+//    Servo tubeRotate;
+//    Servo tubeLift;
+//    Servo tubeAngle;
+
+
     /**
      * Constructor
      */
@@ -116,36 +123,49 @@ public class TeleOp extends OpMode  {
 		 */
 
         mL1 = hardwareMap.dcMotor.get("mL1");
-        mL2 = hardwareMap.dcMotor.get("mL2");
+      //  mL2 = hardwareMap.dcMotor.get("mL2");
       //  mL3 = hardwareMap.dcMotor.get("mL3");
         // mL4 = hardwareMap.dcMotor.get("mL4");
         mR1 = hardwareMap.dcMotor.get("mR1");
-        mR2 = hardwareMap.dcMotor.get("mR2");
-        elevator = hardwareMap.dcMotor.get("elevator");
+       // mR2 = hardwareMap.dcMotor.get("mR2");
+    //    elevator = hardwareMap.dcMotor.get("elevator");
+     //   nom = hardwareMap.dcMotor.get("nom");
      //   mR3 = hardwareMap.dcMotor.get("mR3");
         // mR4 = hardwareMap.dcMotor.get("mR4");
 
 
         mR1.setDirection(DcMotor.Direction.REVERSE);
         mL1.setDirection(DcMotor.Direction.REVERSE);
-        mL2.setDirection(DcMotor.Direction.REVERSE);
-      //  mR3.setDirection(DcMotor.Direction.REVERSE);
+    //    mL2.setDirection(DcMotor.Direction.REVERSE);
+
+        //  mR3.setDirection(DcMotor.Direction.REVERSE);
         // mR4.setDirection(DcMotor.Direction.REVERSE);
         //Servo servo1;
        // servo1 = hardwareMap.servo.get("servozip");
         double servo1Position;
-        	arm = hardwareMap.servo.get("servozip");
-            spool = hardwareMap.servo.get("spool");
-            climbers = hardwareMap.servo.get("climbers");
-            pinion = hardwareMap.servo.get("pinion");
+//        	arm = hardwareMap.servo.get("servozip");
+//            spool = hardwareMap.servo.get("spool");
+//            climbers = hardwareMap.servo.get("climbers");
+//            pinion = hardwareMap.servo.get("pinion");
+//
+//            //westley servos
+//            tubeRotate = hardwareMap.servo.get("tubeRotate");
+//            tubeLift = hardwareMap.servo.get("tubeLift");
+//            tubeAngle = hardwareMap.servo.get("tubeAngle");
 
         //	claw = hardwareMap.servo.get("servo_6");
 
         // assign the starting position of the wrist and claw
-        arm.setPosition(0);
-        spool.setPosition(1);
-        climbers.setPosition(0);
-        pinion.setPosition(.493);
+//        arm.setPosition(0);
+//        spool.setPosition(1);
+//        climbers.setPosition(0);
+//        pinion.setPosition(.493);
+//
+//        //westley servos
+//        tubeRotate.setPosition(.493);
+//        tubeLift.setPosition(.493);
+//        tubeAngle.setPosition(.493);
+
        // servo1.setPosition(0);
        // servo1.setPosition(.8);
 
@@ -194,11 +214,11 @@ public class TeleOp extends OpMode  {
 
         // write the values to the motors
         mL1.setPower(right);
-        mL2.setPower(right);
+     //   mL2.setPower(right);
       //  mL3.setPower(left);
         //  mL4.setPower(left);
         mR1.setPower(left);
-        mR2.setPower(left);
+      //  mR2.setPower(left);
       //  mR3.setPower(right);
         // mR4.setPower(right);
 
@@ -216,38 +236,79 @@ public class TeleOp extends OpMode  {
 
         //
         if(gamepad2.y) {
-            elevator.setPower(1);
+           // elevator.setPower(1);
+          //  nom.setPower(1);
         }
         else{
-            elevator.setPower(0);
+           // elevator.setPower(0);
+          //  nom.setPower(0);
         }
-       if(gamepad2.left_bumper) {
-            arm.setPosition(0.6);
-           telemetry.addData("button a pressed", " ");
-        }
-        else {
-           arm.setPosition(0);
-       }
-        if(gamepad2.right_bumper) {
-            spool.setPosition(0.0);
-        }
-        else {
-            spool.setPosition(1);
-        }
-
-        if(gamepad2.a) {
-            climbers.setPosition(1);
-            telemetry.addData("button a pressed", " ");
-        }
-        else {
-            climbers.setPosition(.1);
-        }
-        if(gamepad2.b){
-            pinion.setPosition(1);
-        }
-        else{
-            pinion.setPosition(.35);
-        }
+//       if(gamepad2.left_bumper) {
+//            arm.setPosition(0.6);
+//           telemetry.addData("button a pressed", " ");
+//        }
+//        else {
+//           arm.setPosition(0);
+//       }
+//        if(gamepad2.right_bumper) {
+//            spool.setPosition(0.0);
+//        }
+//        else {
+//            spool.setPosition(1);
+//        }
+//
+////        if(gamepad2.a) {
+////            climbers.setPosition(1);
+////            telemetry.addData("button a pressed", " ");
+////        }
+////        else {
+////            climbers.setPosition(.1);
+////        }
+////        if(gamepad2.b){
+////            pinion.setPosition(1);
+////        }
+////        else{
+////            pinion.setPosition(.35);
+////        }
+//
+//        //westley code
+//        if(gamepad2.dpad_up){
+//            tubeLift.setDirection(Servo.Direction.FORWARD);
+//            tubeLift.setPosition(.7);
+//        }
+//        else if(gamepad2.dpad_down){
+//            tubeLift.setDirection(Servo.Direction.REVERSE);
+//            tubeLift.setPosition(.7);
+//        }
+//        else{
+//            tubeLift.setPosition(.493);
+//        }
+//
+//        if(gamepad2.dpad_left){
+//            tubeRotate.setDirection(Servo.Direction.FORWARD);
+//            telemetry.addData("left", 0);
+//            tubeRotate.setPosition(.7);
+//        }
+//        else if(gamepad2.dpad_right){
+//            tubeRotate.setDirection(Servo.Direction.REVERSE);
+//            telemetry.addData("right", 0);
+//            tubeRotate.setPosition(.7);
+//        }
+//        else{
+//            tubeRotate.setPosition(.493);
+//        }
+//
+//        if(gamepad2.left_stick_y < 0){
+//            tubeAngle.setDirection(Servo.Direction.REVERSE);
+//            tubeAngle.setPosition(.7);
+//        }
+//        else if(gamepad2.left_stick_y > 0){
+//            tubeAngle.setDirection(Servo.Direction.FORWARD);
+//            tubeAngle.setPosition(.7);
+//        }
+//        else{
+//            tubeAngle.setPosition(.493);
+//        }
 
 //        if(gamepad2.a) armHold = true;
 //        if(armHold==true) arm.setPosition(0.92);
@@ -267,7 +328,7 @@ public class TeleOp extends OpMode  {
         // update the position of the arm
 
         // clip the position values so that they never exceed their allowed range.
-        armPosition = Range.clip(armPosition, ARM_MIN_RANGE, ARM_MAX_RANGE);
+//        armPosition = Range.clip(armPosition, ARM_MIN_RANGE, ARM_MAX_RANGE);
 //        clawPosition = Range.clip(clawPosition, CLAW_MIN_RANGE, CLAW_MAX_RANGE);
 
         // write position values to the wrist and claw servo
@@ -282,13 +343,13 @@ public class TeleOp extends OpMode  {
 		 * will return a null value. The legacy NXT-compatible motor controllers
 		 * are currently write only.
 		 */
-        telemetry.addData("Text", "*** Robot Data***");
-            telemetry.addData("arm", "arm:  " + String.format("%.2f", armPosition));
-        telemetry.addData("spool", "spool:  " + String.format("%.2f", spoolPosition));
-
-        //   telemetry.addData("claw", "claw:  " + String.format("%.2f", clawPosition));
-        telemetry.addData("left tgt pwr",  "left  pwr: " + String.format("%.2f", left));
-        telemetry.addData("right tgt pwr", "right pwr: " + String.format("%.2f", right));
+//        telemetry.addData("Text", "*** Robot Data***");
+//            telemetry.addData("arm", "arm:  " + String.format("%.2f", armPosition));
+//        telemetry.addData("spool", "spool:  " + String.format("%.2f", spoolPosition));
+//
+//        //   telemetry.addData("claw", "claw:  " + String.format("%.2f", clawPosition));
+//        telemetry.addData("left tgt pwr",  "left  pwr: " + String.format("%.2f", left));
+//        telemetry.addData("right tgt pwr", "right pwr: " + String.format("%.2f", right));
 
     }
 

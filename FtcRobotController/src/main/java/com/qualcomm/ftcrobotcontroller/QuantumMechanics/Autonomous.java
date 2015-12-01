@@ -118,33 +118,46 @@ public class Autonomous extends LinearOpMode {
         mL1.setDirection(DcMotor.Direction.REVERSE);
         mL2.setDirection(DcMotor.Direction.REVERSE);
 
-
         waitForStart();
 //get to bucket
-        driveTicks(-.5, 200);
-        sleep(200);
+        driveTicks(-.5, 10650);
+        wait1Msec(200);
 
 
-   //     turnTicks(.5, 1600);
+      //turnTicks(.2, -1265);
     //    sleep(200);
 
 
-   //     driveTicks(-.5, 2000);
-  //      sleep(200);
+     //   driveTicks(-.5, 9155);
+      //  sleep(200);
 
 
 
         //go up
-    pinion.setPosition(.35);
-        sleep(1000);
+    //pinion.setPosition(.35);
+        wait1Msec(1000);
         pinion.setPosition(1);
-        sleep(1000);
+    //dumps climbers
+       // climbers.setPosition(.1);
+//        wait1Msec(3000);
+//        driveTicks(-.5, 250);
+//        climbers.setPosition(.8);
+//        wait1Msec(1000);
+//        climbers.setPosition(.84);
+//        wait1Msec(1000);
+//        driveTicks(-.5, 100);
+//        wait1Msec(500);
+//        climbers.setPosition(.8);
+//        wait1Msec(500);
+//        climbers.setPosition(.84);
 
-//dumbs climbers
-        climbers.setPosition(.1);
-        sleep(1000);
-        climbers.setPosition(1);
-        sleep(1000);
+    }
 
+    void wait1Msec(long msecs) throws InterruptedException{
+        long startTime = System.currentTimeMillis();
+
+        while(startTime + msecs > System.currentTimeMillis()) {
+            waitOneFullHardwareCycle();
+        }
     }
 }
