@@ -35,11 +35,11 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
     Servo pinion;
 
     DcMotor mL1;
-    DcMotor mL2;
+ //  DcMotor mL2;
  //   DcMotor mL3;
 
     DcMotor mR1;
-    DcMotor mR2;
+ //   DcMotor mR2;
   //  DcMotor mR3;
 
 
@@ -47,7 +47,6 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
 
     float orientation = 0;
 
-    float currentDegrees;
 
     private SensorManager mSensorManager;
 
@@ -73,7 +72,7 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
         ticks = Math.abs(ticks);
 
         // Get pos
-        initPos = mR2.getCurrentPosition();
+        initPos = mR1.getCurrentPosition();
         // tFR = mFR.getCurrentPosition();
 
         drive(power); // Start driving
@@ -102,7 +101,7 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
         ticks = Math.abs(ticks);
 
         // Get pos
-        initPos = mR2.getCurrentPosition();
+        initPos = mR1.getCurrentPosition();
 
         drive(power, -power);
 
@@ -122,12 +121,12 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
     private void drive (double lPower, double rPower) {
         mL1.setPower(lPower);
         //    mL2.setPower(lPower);
-        mL2.setPower(lPower);
+       // mL2.setPower(lPower);
      //   mL3.setPower(rPower);
 
         mR1.setPower(rPower);
         //   mR2.setPower(rPower);
-        mR2.setPower(rPower);
+       // mR2.setPower(rPower);
     //    mR3.setPower(rPower);
 
     }
@@ -135,7 +134,7 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
     private int driveEncoders () {
 
 
-        return Math.abs(mR2.getCurrentPosition() - initPos) ;
+        return Math.abs(mR1.getCurrentPosition() - initPos) ;
     }
 
     void initCompassSensor() {
@@ -147,31 +146,44 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
     public void runOpMode() throws InterruptedException {
         mL1 = hardwareMap.dcMotor.get("mL1");
         //   mL2 = hardwareMap.dcMotor.get("mL2");
-        mL2 = hardwareMap.dcMotor.get("mL2");
-     //   mL3 = hardwareMap.dcMotor.get("mL3");
+        // mL2 = hardwareMap.dcMotor.get("mL2");
+        //   mL3 = hardwareMap.dcMotor.get("mL3");
 
         mR1 = hardwareMap.dcMotor.get("mR1");
         // mR2 = hardwareMap.dcMotor.get("mR2");
-        mR2 = hardwareMap.dcMotor.get("mR2");
-      //  mR3 = hardwareMap.dcMotor.get("mR3");
+        //   mR2 = hardwareMap.dcMotor.get("mR2");
+        //  mR3 = hardwareMap.dcMotor.get("mR3");
 
 
         mR1.setDirection(DcMotor.Direction.REVERSE);
         //  mR2.setDirection(DcMotor.Direction.REVERSE);
 
-        mL1.setDirection(DcMotor.Direction.REVERSE);
-        mL2.setDirection(DcMotor.Direction.REVERSE);
+        //    mL1.setDirection(DcMotor.Direction.REVERSE);
+        //   mL2.setDirection(DcMotor.Direction.REVERSE);
 
         waitForStart();
 
-        while(true); // just to get compass readings
+        turnDegrees(.5, 50); //power is -1 to 1
 
-        currentDegrees = orientation;
+    }
 
+    private void turnDegrees (double power, int degrees) throws InterruptedException {
+        power = Math.abs(power); // Make sure power is positive
+        if (degrees < 0) power *=-1;
 
-        while(currentDegrees-orienation < 50) {
-            turn();
+        float initDegrees;
+
+        initDegrees = orientation;
+
+        drive(power, -power);
+
+        while(initDegrees-orientation < degrees) {
+            waitOneFullHardwareCycle();
         }
+
+        drive(0); // Stop motors
+    }
+
 
 //get to bucket
 //        driveTicks(-.5, 10650);
@@ -206,7 +218,7 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
 //        wait1Msec(500);
 //        climbers.setPosition(.84);
 
-    }
+
 
     void wait1Msec(long msecs) throws InterruptedException{
         long startTime = System.currentTimeMillis();
