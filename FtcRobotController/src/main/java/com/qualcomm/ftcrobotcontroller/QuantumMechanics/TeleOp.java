@@ -195,10 +195,32 @@ public class TeleOp extends OpMode  {
         // 1 is full down
         // direction: left_stick_x ranges from -1 to 1, where -1 is full left
         // and 1 is full right
-        float throttle = gamepad1.left_stick_y;
+
+        //****** comment stuff back in with left stick for normal driving
+
+
+       float throttle = gamepad1.left_stick_y;
+       //float throttle = gamepad1.left_trigger;
+       // float backwards = -(gamepad1.right_trigger);
         float direction = gamepad1.right_stick_x;
+
         float right = throttle - direction;
         float left = throttle + direction;
+
+
+//        //kyle's stuff
+//        if(gamepad1.left_trigger>.05){
+//            float right = throttle - direction;
+//            float left = throttle + direction;
+//        }
+//        //kyle's stuff
+//        if(gamepad1.right_trigger>.05){
+//            float right = backwards - direction;
+//            float left = backwards + direction;
+//        }
+//
+
+
 
 
         // clip the right/left values so that the values never exceed +/- 1
@@ -342,6 +364,9 @@ public class TeleOp extends OpMode  {
 		 * a legacy NXT-compatible motor controller, then the getPower() method
 		 * will return a null value. The legacy NXT-compatible motor controllers
 		 * are currently write only.
+		 *
+		 *
+		 * Kyle's stuff with triggers is on the Bottom
 		 */
 //        telemetry.addData("Text", "*** Robot Data***");
 //            telemetry.addData("arm", "arm:  " + String.format("%.2f", armPosition));
@@ -350,6 +375,7 @@ public class TeleOp extends OpMode  {
 //        //   telemetry.addData("claw", "claw:  " + String.format("%.2f", clawPosition));
 //        telemetry.addData("left tgt pwr",  "left  pwr: " + String.format("%.2f", left));
 //        telemetry.addData("right tgt pwr", "right pwr: " + String.format("%.2f", right));
+          telemetry.addData("left trigger", "left trigger pwr: " + String.format("%.2f", throttle));
 
     }
 
