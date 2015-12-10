@@ -46,6 +46,9 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
     int initPos;
 
     float orientation = 0;
+
+    float currentDegrees;
+
     private SensorManager mSensorManager;
 
     @Override
@@ -54,6 +57,7 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
         float degree = Math.round(event.values[0]);
 
         orientation = degree;
+        telemetry.addData("Orientation: ", orientation);
     }
 
     void initSensor() {
@@ -154,13 +158,24 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
 
         mR1.setDirection(DcMotor.Direction.REVERSE);
         //  mR2.setDirection(DcMotor.Direction.REVERSE);
+
         mL1.setDirection(DcMotor.Direction.REVERSE);
         mL2.setDirection(DcMotor.Direction.REVERSE);
 
         waitForStart();
+
+        while(true); // just to get compass readings
+
+        currentDegrees = orientation;
+
+
+        while(currentDegrees-orienation < 50) {
+            turn();
+        }
+
 //get to bucket
-        driveTicks(-.5, 10650);
-        wait1Msec(200);
+//        driveTicks(-.5, 10650);
+//        wait1Msec(200);
 
 
 
@@ -175,8 +190,8 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
 
         //go up
     //pinion.setPosition(.35);
-        wait1Msec(1000);
-        pinion.setPosition(1);
+//        wait1Msec(1000);
+//        pinion.setPosition(1);
     //dumps climbers
        // climbers.setPosition(.1);
 //        wait1Msec(3000);
