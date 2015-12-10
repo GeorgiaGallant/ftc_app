@@ -34,6 +34,8 @@ package com.qualcomm.ftcrobotcontroller.QuantumMechanics;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
+
+
 /**
  * TeleOp Mode
  * <p>
@@ -122,27 +124,27 @@ public class TeleOp extends OpMode  {
 		 *    "servo_6" controls the claw joint of the manipulator.
 		 */
 
-        mL1 = hardwareMap.dcMotor.get("mL1");
-      //  mL2 = hardwareMap.dcMotor.get("mL2");
-      //  mL3 = hardwareMap.dcMotor.get("mL3");
-        // mL4 = hardwareMap.dcMotor.get("mL4");
-        mR1 = hardwareMap.dcMotor.get("mR1");
-       // mR2 = hardwareMap.dcMotor.get("mR2");
-    //    elevator = hardwareMap.dcMotor.get("elevator");
-     //   nom = hardwareMap.dcMotor.get("nom");
-     //   mR3 = hardwareMap.dcMotor.get("mR3");
-        // mR4 = hardwareMap.dcMotor.get("mR4");
-
-
+             mL1 = hardwareMap.dcMotor.get("mL1");
+//      //  mL2 = hardwareMap.dcMotor.get("mL2");
+//      //  mL3 = hardwareMap.dcMotor.get("mL3");
+//        // mL4 = hardwareMap.dcMotor.get("mL4");
+           mR1 = hardwareMap.dcMotor.get("mR1");
+//       // mR2 = hardwareMap.dcMotor.get("mR2");
+//    //    elevator = hardwareMap.dcMotor.get("elevator");
+//     //   nom = hardwareMap.dcMotor.get("nom");
+//     //   mR3 = hardwareMap.dcMotor.get("mR3");
+//        // mR4 = hardwareMap.dcMotor.get("mR4");
+//
+//
         mR1.setDirection(DcMotor.Direction.REVERSE);
         mL1.setDirection(DcMotor.Direction.REVERSE);
-    //    mL2.setDirection(DcMotor.Direction.REVERSE);
-
-        //  mR3.setDirection(DcMotor.Direction.REVERSE);
-        // mR4.setDirection(DcMotor.Direction.REVERSE);
-        //Servo servo1;
-       // servo1 = hardwareMap.servo.get("servozip");
-        double servo1Position;
+//    //    mL2.setDirection(DcMotor.Direction.REVERSE);
+//
+//        //  mR3.setDirection(DcMotor.Direction.REVERSE);
+//        // mR4.setDirection(DcMotor.Direction.REVERSE);
+//        //Servo servo1;
+//       // servo1 = hardwareMap.servo.get("servozip");
+//        double servo1Position;
 //        	arm = hardwareMap.servo.get("servozip");
 //            spool = hardwareMap.servo.get("spool");
 //            climbers = hardwareMap.servo.get("climbers");
@@ -172,9 +174,9 @@ public class TeleOp extends OpMode  {
 
     }
     //got some booleans that may or may not be used
-    boolean armOut=false;
-    boolean armPressed=false;
-    boolean armHold = false;
+//    boolean armOut=false;
+//    boolean armPressed=false;
+//    boolean armHold = false;
 
     /*
      * This method will be called repeatedly in a loop
@@ -196,27 +198,27 @@ public class TeleOp extends OpMode  {
         // direction: left_stick_x ranges from -1 to 1, where -1 is full left
         // and 1 is full right
         float throttle = gamepad1.left_stick_y;
-        float direction = gamepad1.right_stick_x;
+        float direction = gamepad1.left_stick_x;
         float right = throttle - direction;
         float left = throttle + direction;
-
-
-        // clip the right/left values so that the values never exceed +/- 1
+//
+//
+//        // clip the right/left values so that the values never exceed +/- 1
         right = Range.clip(right, -1, 1);
         left = Range.clip(left, -1, 1);
-
-
-        // scale the joystick value to make it easier to control
-        // the robot more precisely at slower speeds.
+//
+//
+//        // scale the joystick value to make it easier to control
+//        // the robot more precisely at slower speeds.
         right = (float)scaleInput(right);
         left =  (float)scaleInput(left);
-
-
-        // write the values to the motors
+//
+//
+//        // write the values to the motors
         mL1.setPower(right);
-     //   mL2.setPower(right);
-      //  mL3.setPower(left);
-        //  mL4.setPower(left);
+//     //   mL2.setPower(right);
+//      //  mL3.setPower(left);
+//        //  mL4.setPower(left);
         mR1.setPower(left);
       //  mR2.setPower(left);
       //  mR3.setPower(right);
@@ -235,14 +237,14 @@ public class TeleOp extends OpMode  {
         } */
 
         //
-        if(gamepad2.y) {
-           // elevator.setPower(1);
-          //  nom.setPower(1);
-        }
-        else{
-           // elevator.setPower(0);
-          //  nom.setPower(0);
-        }
+//        if(gamepad2.y) {
+//           // elevator.setPower(1);
+//          //  nom.setPower(1);
+//        }
+//        else{
+//           // elevator.setPower(0);
+//          //  nom.setPower(0);
+//        }
 //       if(gamepad2.left_bumper) {
 //            arm.setPosition(0.6);
 //           telemetry.addData("button a pressed", " ");
@@ -275,6 +277,7 @@ public class TeleOp extends OpMode  {
 //        if(gamepad2.dpad_up){
 //            tubeLift.setDirection(Servo.Direction.FORWARD);
 //            tubeLift.setPosition(.7);
+//            telemetry.addData("PRESSED!!!!", " ");
 //        }
 //        else if(gamepad2.dpad_down){
 //            tubeLift.setDirection(Servo.Direction.REVERSE);
@@ -287,12 +290,21 @@ public class TeleOp extends OpMode  {
 //        if(gamepad2.dpad_left){
 //            tubeRotate.setDirection(Servo.Direction.FORWARD);
 //            telemetry.addData("left", 0);
-//            tubeRotate.setPosition(.7);
+//            tubeRotate.setPosition(.55);
 //        }
 //        else if(gamepad2.dpad_right){
 //            tubeRotate.setDirection(Servo.Direction.REVERSE);
 //            telemetry.addData("right", 0);
-//            tubeRotate.setPosition(.7);
+//            tubeRotate.setPosition(.55);
+//        }
+//        else if(gamepad2.a){
+//            telemetry.addData("freeze", 0);
+//            tubeRotate.setDirection(Servo.Direction.REVERSE);
+//            tubeRotate.setPosition(.75);
+//            tubeRotate.setDirection(Servo.Direction.FORWARD);
+//            tubeRotate.setPosition(.75);
+//            tubeRotate.setPosition(.493);
+//
 //        }
 //        else{
 //            tubeRotate.setPosition(.493);
@@ -300,15 +312,19 @@ public class TeleOp extends OpMode  {
 //
 //        if(gamepad2.left_stick_y < 0){
 //            tubeAngle.setDirection(Servo.Direction.REVERSE);
-//            tubeAngle.setPosition(.7);
+//            tubeAngle.setPosition(.55);
 //        }
 //        else if(gamepad2.left_stick_y > 0){
 //            tubeAngle.setDirection(Servo.Direction.FORWARD);
-//            tubeAngle.setPosition(.7);
+//            tubeAngle.setPosition(.55);
 //        }
 //        else{
 //            tubeAngle.setPosition(.493);
 //        }
+//
+
+
+
 
 //        if(gamepad2.a) armHold = true;
 //        if(armHold==true) arm.setPosition(0.92);
