@@ -1,11 +1,14 @@
 package com.qualcomm.ftcrobotcontroller.QuantumMechanics;
 
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import android.hardware.*;
 
 
 //TEST//
@@ -15,6 +18,18 @@ import android.hardware.*;
 
 
 public class Autonomous extends LinearOpMode implements SensorEventListener {
+
+    Context context;
+
+    public Autonomous(Context c) {
+        super();
+
+        context = c;
+
+        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+                SensorManager.SENSOR_DELAY_FASTEST);
+    }
 
     Servo climbers;
     Servo pinion;
@@ -35,15 +50,15 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-
         // get the angle around the z-axis rotated
         float degree = Math.round(event.values[0]);
 
         orientation = degree;
-
     }
 
-    @Override
+    void initSensor() {
+
+    }
 
 
     private void driveTicks(double power, int ticks) throws InterruptedException{
@@ -121,9 +136,7 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
 
     void initCompassSensor() {
         SensorManager mSensorManager;
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-
-
+        mSensorManager = (SensorManager) context.getSystemService(context.SENSOR_SERVICE);
     }
 
     @Override
@@ -188,42 +201,17 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        //
-        image = (ImageView) findViewById(R.id.main_iv);
-
-        // TextView that will tell the user what degree is he heading
-        tvHeading = (TextView) findViewById(R.id.tvHeading);
-
-        // initialize your android device sensor capabilities
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // for the system's orientation sensor registered listeners
-        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                SensorManager.SENSOR_DELAY_GAME);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // to stop the listener and save battery
-        mSensorManager.unregisterListener(this);
-    }
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        // initialize your android device sensor capabilities
+//        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+//    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // not in use
     }
+
 
 
 

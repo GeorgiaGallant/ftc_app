@@ -31,6 +31,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import android.content.Context;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
 
@@ -38,6 +40,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
  * Register Op Modes
  */
 public class FtcOpModeRegister implements OpModeRegister {
+
+
+  Context context;
+
+  public FtcOpModeRegister(Context c) {
+    context = c;
+  }
 
   /**
    * The Op Mode Manager will call this method when it wants a list of all
@@ -55,8 +64,12 @@ public class FtcOpModeRegister implements OpModeRegister {
      * If two or more op modes are registered with the same name, the app will display an error.
      */
 
+    //Autonomous autonomous = new Autonomous(context);
+
+
     manager.register("NullOp", NullOp.class);
 
+   // manager.register("");
     manager.register("MatrixK9TeleOp", MatrixK9TeleOp.class);
     manager.register("K9TeleOp", K9TeleOp.class);
     manager.register ("PushBotAuto", PushBotAuto.class);

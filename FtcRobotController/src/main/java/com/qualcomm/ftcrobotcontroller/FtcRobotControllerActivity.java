@@ -324,7 +324,7 @@ public class FtcRobotControllerActivity extends Activity {
     modernRoboticsFactory.setXmlInputStream(fis);
     factory = modernRoboticsFactory;
 
-    eventLoop = new FtcEventLoop(factory, new FtcOpModeRegister(), callback, this);
+    eventLoop = new FtcEventLoop(factory, new FtcOpModeRegister(this), callback, this);
 
     controllerService.setCallback(callback);
     controllerService.setupRobot(eventLoop);
