@@ -1,9 +1,5 @@
 package com.qualcomm.ftcrobotcontroller.QuantumMechanics;
 
-import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,18 +13,18 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 
 
-public class Autonomous extends LinearOpMode implements SensorEventListener {
+public class Autonomous extends LinearOpMode{
 
-    Context context;
 
-    public Autonomous(Context c) {
-        super();
 
-        context = c;
+    public Autonomous() {
 
-        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                SensorManager.SENSOR_DELAY_FASTEST);
+
+
+
+     //   mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+      //  mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+        //        SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     Servo climbers;
@@ -50,18 +46,18 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
 
     private SensorManager mSensorManager;
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        // get the angle around the z-axis rotated
-        float degree = Math.round(event.values[0]);
-
-        orientation = degree;
-        telemetry.addData("Orientation: ", orientation);
-    }
-
-    void initSensor() {
-
-    }
+//    @Override
+//    public void onSensorChanged(SensorEvent event) {
+//        // get the angle around the z-axis rotated
+//        float degree = Math.round(event.values[0]);
+//
+//        orientation = degree;
+//        telemetry.addData("Orientation: ", orientation);
+//    }
+//
+//    void initSensor() {
+//
+//    }
 
 
     private void driveTicks(double power, int ticks) throws InterruptedException{
@@ -139,7 +135,7 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
 
     void initCompassSensor() {
         SensorManager mSensorManager;
-        mSensorManager = (SensorManager) context.getSystemService(context.SENSOR_SERVICE);
+    //    mSensorManager = (SensorManager) context.getSystemService(context.SENSOR_SERVICE);
     }
 
     @Override
@@ -163,7 +159,7 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
 
         waitForStart();
 
-        turnDegrees(.5, 50); //power is -1 to 1
+        turnTicks(.5, 50); //power is -1 to 1
 
     }
 
@@ -234,10 +230,6 @@ public class Autonomous extends LinearOpMode implements SensorEventListener {
 //        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 //    }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // not in use
-    }
 
 
 

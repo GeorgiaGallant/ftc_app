@@ -31,21 +31,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.QuantumMechanics;
 
-import android.content.Context;
-
+import com.qualcomm.ftcrobotcontroller.opmodes.NullOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
-import com.qualcomm.ftcrobotcontroller.opmodes.NullOp;
 /**
  * Register Op Modes
  */
 public class FtcOpModeRegister implements OpModeRegister {
 
-    Context context;
 
-    public FtcOpModeRegister(Context c) {
-        context = c;
-    }
 
     /**
      * The Op Mode Manager will call this method when it wants a list of all
@@ -63,9 +57,9 @@ public class FtcOpModeRegister implements OpModeRegister {
      * If two or more op modes are registered with the same name, the app will display an error.
      */
 
-        Autonomous autonomous = new Autonomous(context);
+
         manager.register("NullOp", NullOp.class);
-        manager.register("Autonomous", autonomous);
+        manager.register("Autonomous", Autonomous.class);
         manager.register("TeleOp", TeleOp.class);
         manager.register("ServoTest", ServoTest.class);
     /*

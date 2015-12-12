@@ -33,7 +33,9 @@ package com.qualcomm.ftcrobotcontroller.QuantumMechanics;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+
 
 
 /**
@@ -76,10 +78,11 @@ public class TeleOp extends OpMode  {
     DcMotor mR1;
  //   DcMotor mR2;
   //  DcMotor elevator; //here
- //   DcMotor nom;//here
   //  DcMotor mR3;
     // DcMotor mR4;
+    DcMotor nom;
 
+    Servo zipline;
 //    Servo spool;
 ////    Servo arm;
 //    Servo climbers;
@@ -131,13 +134,15 @@ public class TeleOp extends OpMode  {
            mR1 = hardwareMap.dcMotor.get("mR1");
 //       // mR2 = hardwareMap.dcMotor.get("mR2");
 //    //    elevator = hardwareMap.dcMotor.get("elevator");
-//     //   nom = hardwareMap.dcMotor.get("nom");
+        nom = hardwareMap.dcMotor.get("nom");
 //     //   mR3 = hardwareMap.dcMotor.get("mR3");
 //        // mR4 = hardwareMap.dcMotor.get("mR4");
 //
 //
         mR1.setDirection(DcMotor.Direction.REVERSE);
         mL1.setDirection(DcMotor.Direction.REVERSE);
+        nom.setDirection(DcMotor.Direction.REVERSE);
+
 //    //    mL2.setDirection(DcMotor.Direction.REVERSE);
 //
 //        //  mR3.setDirection(DcMotor.Direction.REVERSE);
@@ -149,6 +154,7 @@ public class TeleOp extends OpMode  {
 //            spool = hardwareMap.servo.get("spool");
 //            climbers = hardwareMap.servo.get("climbers");
 //            pinion = hardwareMap.servo.get("pinion");
+                zipline = hardwareMap.servo.get("zipline");
 //
 //            //westley servos
 //            tubeRotate = hardwareMap.servo.get("tubeRotate");
@@ -162,7 +168,8 @@ public class TeleOp extends OpMode  {
 //        spool.setPosition(1);
 //        climbers.setPosition(0);
 //        pinion.setPosition(.493);
-//
+
+        zipline.setPosition(.493);
 //        //westley servos
 //        tubeRotate.setPosition(.493);
 //        tubeLift.setPosition(.493);
@@ -237,14 +244,17 @@ public class TeleOp extends OpMode  {
         } */
 
         //
-//        if(gamepad2.y) {
-//           // elevator.setPower(1);
-//          //  nom.setPower(1);
-//        }
-//        else{
-//           // elevator.setPower(0);
-//          //  nom.setPower(0);
-//        }
+        if(gamepad1.right_bumper) {
+           // elevator.setPower(1);
+            nom.setPower(1);
+        }
+        else{
+           // elevator.setPower(0);
+            nom.setPower(0);
+        }
+        if(gamepad1.right_trigger > 0){
+            zipline.setPosition(1);
+        }
 //       if(gamepad2.left_bumper) {
 //            arm.setPosition(0.6);
 //           telemetry.addData("button a pressed", " ");
