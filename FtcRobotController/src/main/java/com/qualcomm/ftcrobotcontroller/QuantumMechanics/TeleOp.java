@@ -81,8 +81,14 @@ public class TeleOp extends OpMode  {
   //  DcMotor mR3;
     // DcMotor mR4;
     DcMotor nom;
+    DcMotor pullup;
+    DcMotor conveyor;
 
     Servo zipline;
+    Servo pullupS;
+//    Servo rightDoor;
+//    Servo leftDoor;
+
 //    Servo spool;
 ////    Servo arm;
 //    Servo climbers;
@@ -135,13 +141,17 @@ public class TeleOp extends OpMode  {
 //       // mR2 = hardwareMap.dcMotor.get("mR2");
 //    //    elevator = hardwareMap.dcMotor.get("elevator");
         nom = hardwareMap.dcMotor.get("nom");
+        pullup = hardwareMap.dcMotor.get("pullup");
+        conveyor = hardwareMap.dcMotor.get("conveyor");
 //     //   mR3 = hardwareMap.dcMotor.get("mR3");
 //        // mR4 = hardwareMap.dcMotor.get("mR4");
 //
 //
-        mR1.setDirection(DcMotor.Direction.REVERSE);
-        mL1.setDirection(DcMotor.Direction.REVERSE);
+        mR1.setDirection(DcMotor.Direction.FORWARD);
+        mL1.setDirection(DcMotor.Direction.FORWARD);
         nom.setDirection(DcMotor.Direction.REVERSE);
+        pullup.setDirection(DcMotor.Direction.REVERSE);
+        conveyor.setDirection(DcMotor.Direction.REVERSE);
 
 //    //    mL2.setDirection(DcMotor.Direction.REVERSE);
 //
@@ -154,7 +164,7 @@ public class TeleOp extends OpMode  {
 //            spool = hardwareMap.servo.get("spool");
 //            climbers = hardwareMap.servo.get("climbers");
 //            pinion = hardwareMap.servo.get("pinion");
-                zipline = hardwareMap.servo.get("zipline");
+             //   zipline = hardwareMap.servo.get("zipline");
 //
 //            //westley servos
 //            tubeRotate = hardwareMap.servo.get("tubeRotate");
@@ -169,8 +179,8 @@ public class TeleOp extends OpMode  {
 //        climbers.setPosition(0);
 //        pinion.setPosition(.493);
 
-        zipline.setPosition(.493);
-//        //westley servos
+//        zipline.setPosition(.493);
+////        //westley servos
 //        tubeRotate.setPosition(.493);
 //        tubeLift.setPosition(.493);
 //        tubeAngle.setPosition(.493);
@@ -204,8 +214,8 @@ public class TeleOp extends OpMode  {
         // 1 is full down
         // direction: left_stick_x ranges from -1 to 1, where -1 is full left
         // and 1 is full right
-        float throttle = gamepad1.left_stick_y;
-        float direction = gamepad1.left_stick_x;
+        float throttle = gamepad1.left_stick_x;
+        float direction = gamepad1.left_stick_y;
         float right = throttle - direction;
         float left = throttle + direction;
 //
@@ -214,7 +224,9 @@ public class TeleOp extends OpMode  {
         right = Range.clip(right, -1, 1);
         left = Range.clip(left, -1, 1);
 //
-//
+//        //ramped turning so the robot doesn't jerk
+
+
 //        // scale the joystick value to make it easier to control
 //        // the robot more precisely at slower speeds.
         right = (float)scaleInput(right);
@@ -231,7 +243,21 @@ public class TeleOp extends OpMode  {
       //  mR3.setPower(right);
         // mR4.setPower(right);
 
-        //
+
+        //GAMEPAD 1
+
+        //nom stuff
+
+        if(gamepad1.right_bumper) {
+            nom.setPower(-.7);
+        }
+        else{
+            nom.setPower(0);
+        }
+
+
+
+        //GAMEPAD 2
         //Zipclimber arm
         //when button(a) is pushed, toggle arm
         //test position values!
@@ -243,18 +269,58 @@ public class TeleOp extends OpMode  {
             else arm.setPosition(0.0);
         } */
 
-        //
-        if(gamepad1.right_bumper) {
-           // elevator.setPower(1);
-            nom.setPower(1);
+        //Trying to do pullup
+
+        if((gamepad1.right_bumper==true)&&(gamepad1.left_bumper==false)) {
+            pullup.setPower(-.7);
+        }
+        if((gamepad1.left_bumper==true)&&(gamepad1.right_bumper==false)) {
+            pullup.setPower(.7);
         }
         else{
-           // elevator.setPower(0);
-            nom.setPower(0);
+            pullup.setPower(0);
         }
-        if(gamepad1.right_trigger > 0){
-            zipline.setPosition(1);
+//
+        //get input, clip, scale, set power
+//   float pullit = gamepad2.left_stick_y;
+//        pullit = Range.clip(pullit, -1, 1);
+//        pullit = (float)scaleInput(pullit);
+//        pullup.setPower(pullit);
+
+        //pullup Servo
+        if (gamepad2.a){
+            pullupS.setPosition(.5);
         }
+        if (gamepad2.b){
+            pullupS.setPosition(0);
+        }
+
+
+        //conveyerbelt
+        if (gamepad2.dpad_right){
+            conveyor.setPower(.8);
+        }
+        else{
+            conveyor.setPower(0);
+        }
+        if (gamepad2.dpad_left){
+            conveyor.setPower(-.8);
+        }
+        else{
+            conveyor.setPower(0);
+        }
+
+//        //Door
+//
+//        if (gamepad2.b){
+//            rightDoor.setPosition(.);
+//        }
+//
+
+
+//        if(gamepad1.right_trigger > 0){
+//            zipline.setPosition(1);
+//        }
 //       if(gamepad2.left_bumper) {
 //            arm.setPosition(0.6);
 //           telemetry.addData("button a pressed", " ");
