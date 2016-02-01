@@ -72,20 +72,21 @@ public class TeleOp extends OpMode  {
     double clawDelta = 0.1;
 
     DcMotor mL1;
- //   DcMotor mL2;
+   DcMotor mL2; //added
    // DcMotor mL3;
     // DcMotor mL4;
     DcMotor mR1;
- //   DcMotor mR2;
+   DcMotor mR2; //added
   //  DcMotor elevator; //here
   //  DcMotor mR3;
     // DcMotor mR4;
-    DcMotor nom;
-    DcMotor pullup;
-    DcMotor conveyor;
+  //  DcMotor nom;
+   // DcMotor pullup;
+    //DcMotor conveyor;
 
-    Servo zipline;
-    Servo pullupS;
+
+ //   Servo zipline;
+    //Servo pullupS;
 //    Servo rightDoor;
 //    Servo leftDoor;
 
@@ -134,27 +135,28 @@ public class TeleOp extends OpMode  {
 		 */
 
              mL1 = hardwareMap.dcMotor.get("mL1");
-//      //  mL2 = hardwareMap.dcMotor.get("mL2");
+              mL2 = hardwareMap.dcMotor.get("mL2"); //added
 //      //  mL3 = hardwareMap.dcMotor.get("mL3");
 //        // mL4 = hardwareMap.dcMotor.get("mL4");
            mR1 = hardwareMap.dcMotor.get("mR1");
-//       // mR2 = hardwareMap.dcMotor.get("mR2");
+         mR2 = hardwareMap.dcMotor.get("mR2"); //added
 //    //    elevator = hardwareMap.dcMotor.get("elevator");
-        nom = hardwareMap.dcMotor.get("nom");
-        pullup = hardwareMap.dcMotor.get("pullup");
-        conveyor = hardwareMap.dcMotor.get("conveyor");
+       // nom = hardwareMap.dcMotor.get("nom");
+        //pullup = hardwareMap.dcMotor.get("pullup");
+        //conveyor = hardwareMap.dcMotor.get("conveyor");
 //     //   mR3 = hardwareMap.dcMotor.get("mR3");
 //        // mR4 = hardwareMap.dcMotor.get("mR4");
 //
 //
         mR1.setDirection(DcMotor.Direction.FORWARD);
         mL1.setDirection(DcMotor.Direction.FORWARD);
-        nom.setDirection(DcMotor.Direction.REVERSE);
-        pullup.setDirection(DcMotor.Direction.REVERSE);
-        conveyor.setDirection(DcMotor.Direction.REVERSE);
+     //   nom.setDirection(DcMotor.Direction.REVERSE);
+      //  pullup.setDirection(DcMotor.Direction.REVERSE);
+       // conveyor.setDirection(DcMotor.Direction.REVERSE);
 
-//    //    mL2.setDirection(DcMotor.Direction.REVERSE);
-//
+        mL2.setDirection(DcMotor.Direction.FORWARD); //added
+        mR2.setDirection(DcMotor.Direction.FORWARD); //added
+
 //        //  mR3.setDirection(DcMotor.Direction.REVERSE);
 //        // mR4.setDirection(DcMotor.Direction.REVERSE);
 //        //Servo servo1;
@@ -235,10 +237,12 @@ public class TeleOp extends OpMode  {
 //
 //        // write the values to the motors
         mL1.setPower(right);
+        mL2.setPower(right); //added
 //     //   mL2.setPower(right);
 //      //  mL3.setPower(left);
 //        //  mL4.setPower(left);
         mR1.setPower(left);
+        mR2.setPower(left); //added
       //  mR2.setPower(left);
       //  mR3.setPower(right);
         // mR4.setPower(right);
@@ -248,12 +252,12 @@ public class TeleOp extends OpMode  {
 
         //nom stuff
 
-        if(gamepad1.right_bumper) {
-            nom.setPower(-.7);
-        }
-        else{
-            nom.setPower(0);
-        }
+//        if(gamepad1.right_bumper) {
+//            nom.setPower(-.7);
+//        }
+//        else{
+//            nom.setPower(0);
+//        }
 
 
 
@@ -271,16 +275,16 @@ public class TeleOp extends OpMode  {
 
         //Trying to do pullup
 
-        if((gamepad1.right_bumper==true)&&(gamepad1.left_bumper==false)) {
-            pullup.setPower(-.7);
-        }
-        if((gamepad1.left_bumper==true)&&(gamepad1.right_bumper==false)) {
-            pullup.setPower(.7);
-        }
-        else{
-            pullup.setPower(0);
-        }
-//
+//        if((gamepad1.right_bumper==true)&&(gamepad1.left_bumper==false)) {
+//            pullup.setPower(-.7);
+//        }
+//        if((gamepad1.left_bumper==true)&&(gamepad1.right_bumper==false)) {
+//            pullup.setPower(.7);
+//        }
+//        else{
+//            pullup.setPower(0);
+//        }
+////
         //get input, clip, scale, set power
 //   float pullit = gamepad2.left_stick_y;
 //        pullit = Range.clip(pullit, -1, 1);
@@ -288,27 +292,27 @@ public class TeleOp extends OpMode  {
 //        pullup.setPower(pullit);
 
         //pullup Servo
-        if (gamepad2.a){
-            pullupS.setPosition(.5);
-        }
-        if (gamepad2.b){
-            pullupS.setPosition(0);
-        }
-
-
-        //conveyerbelt
-        if (gamepad2.dpad_right){
-            conveyor.setPower(.8);
-        }
-        else{
-            conveyor.setPower(0);
-        }
-        if (gamepad2.dpad_left){
-            conveyor.setPower(-.8);
-        }
-        else{
-            conveyor.setPower(0);
-        }
+//        if (gamepad2.a){
+//            pullupS.setPosition(.5);
+//        }
+//        if (gamepad2.b){
+//            pullupS.setPosition(0);
+//        }
+//
+//
+//        //conveyerbelt
+//        if (gamepad2.dpad_right){
+//            conveyor.setPower(.8);
+//        }
+//        else{
+//            conveyor.setPower(0);
+//        }
+//        if (gamepad2.dpad_left){
+//            conveyor.setPower(-.8);
+//        }
+//        else{
+//            conveyor.setPower(0);
+//        }
 
 //        //Door
 //
