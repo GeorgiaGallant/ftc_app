@@ -72,11 +72,11 @@ public class TeleOp extends OpMode  {
     double clawDelta = 0.1;
 
     DcMotor mL1;
-   DcMotor mL2; //added
+    DcMotor mL2; //added
    // DcMotor mL3;
     // DcMotor mL4;
     DcMotor mR1;
-   DcMotor mR2; //added
+    DcMotor mR2; //added
   //  DcMotor elevator; //here
   //  DcMotor mR3;
     // DcMotor mR4;
@@ -134,12 +134,12 @@ public class TeleOp extends OpMode  {
 		 *    "servo_6" controls the claw joint of the manipulator.
 		 */
 
-             mL1 = hardwareMap.dcMotor.get("mL1");
-              mL2 = hardwareMap.dcMotor.get("mL2"); //added
+            mL1 = hardwareMap.dcMotor.get("mL1");
+            mL2 = hardwareMap.dcMotor.get("mL2"); //added
 //      //  mL3 = hardwareMap.dcMotor.get("mL3");
 //        // mL4 = hardwareMap.dcMotor.get("mL4");
-           mR1 = hardwareMap.dcMotor.get("mR1");
-         mR2 = hardwareMap.dcMotor.get("mR2"); //added
+            mR1 = hardwareMap.dcMotor.get("mR1");
+            mR2 = hardwareMap.dcMotor.get("mR2"); //added
 //    //    elevator = hardwareMap.dcMotor.get("elevator");
        // nom = hardwareMap.dcMotor.get("nom");
         //pullup = hardwareMap.dcMotor.get("pullup");

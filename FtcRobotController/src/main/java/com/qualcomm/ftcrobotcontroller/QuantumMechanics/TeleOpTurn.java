@@ -225,51 +225,87 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
             // 1 is full down
             // direction: left_stick_x ranges from -1 to 1, where -1 is full left
             // and 1 is full right
-            float direction = gamepad1.left_stick_x;
-            float throttle = gamepad1.left_stick_y;
-            float right = throttle - direction;
-            float left = throttle + direction;
-//
+            float leftRight = gamepad1.left_stick_x;
+            float frontBack = gamepad1.left_stick_y;
+            //float right =
+            //float left =
+
+            if(leftRight<.2 && leftRight>-.2){
+                leftRight = 0;
+            }
+            if(frontBack<.2 && frontBack>-.2){
+                frontBack = 0;
+            }
 //
 //        // clip the right/left values so that the values never exceed +/- 1
-            right = Range.clip(right, -1, 1);
-            left = Range.clip(left, -1, 1);
+//            leftRight = Range.clip(leftRight, -1, 1);
+//            frontBack = Range.clip(frontBack, -1, 1);
 //
 
 
 //        // scale the joystick value to make it easier to control
 //        // the robot more precisely at slower speeds.
-            right = (float)scaleInput(right);
-            left =  (float)scaleInput(left);
+//            right = (float)scaleInput(right);
+//            left =  (float)scaleInput(left);
 //
 //
 //        // write the values to the motors
-            if(direction!=1 || direction!=-1){
-                mL1.setPower(right);
-                mL2.setPower(right);
-                mR1.setPower(left);
-                mR2.setPower(left);
-            }
-            if(direction==1){
-                for (double i = .3; i < 1; i+=.1) {
-                    right = (float)scaleInput(-i);
-                    left = (float)scaleInput(i);
-                    mL1.setPower(right);
-                    mL2.setPower(right);
-                    mR1.setPower(left);
-                    mR2.setPower(left);
+                if (frontBack >.2){ //go forward
+                    mL1.setPower(frontBack);
+                    mL2.setPower(frontBack);
+                    mR1.setPower(frontBack);
+                    mR2.setPower(frontBack);
+
                 }
-            }
-            if(direction==-1){
-                for (double i = -.3; i > -1; i-=.1) {
-                    right = (float)scaleInput(i);
-                    left = (float)scaleInput(-i);
-                    mL1.setPower(right);
-                    mL2.setPower(right);
-                    mR1.setPower(left);
-                    mR2.setPower(left);
+                else if (frontBack < -.2){ //go backward
+                    mL1.setPower(frontBack);
+                    mL2.setPower(frontBack);
+                    mR1.setPower(frontBack);
+                    mR2.setPower(frontBack);
+
                 }
-            }
+                else if (leftRight > .2){
+                    mL1.setPower(leftRight);
+                    mL2.setPower(leftRight);
+                    mR1.setPower(-leftRight);
+                    mR2.setPower(-leftRight);
+
+                }
+                else if (leftRight < -.2){
+                    mL1.setPower(leftRight);
+                    mL2.setPower(leftRight);
+                    mR1.setPower(-leftRight);
+                    mR2.setPower(-leftRight);
+                }
+                else {
+                    mL1.setPower(0);
+                    mL2.setPower(0);
+                    mR1.setPower(0);
+                    mR2.setPower(0);
+                }
+
+
+
+//            if(direction==1){
+//                for (double i = .3; i < 1; i+=.1) {
+//                    right = (float)scaleInput(-i);
+//                    left = (float)scaleInput(i);
+//                    mL1.setPower(right);
+//                    mL2.setPower(right);
+//                    mR1.setPower(left);
+//                    mR2.setPower(left);
+//                }
+//            }
+//            if(direction==-1){
+//                for (double i = -.3; i > -1; i-=.1) {
+//                    right = (float)scaleInput(i);
+//                    left = (float)scaleInput(-i);
+//                    mL1.setPower(right);
+//                    mL2.setPower(right);
+//                    mR1.setPower(left);
+//                    mR2.setPower(left);
+//                }
+//            }
 //     //   mL2.setPower(right);
 //      //  mL3.setPower(left);
 //        //  mL4.setPower(left);
@@ -329,15 +365,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 //                pullupS.setPosition(0);
 //            }
 //            //pullup manual
-//            if(gamepad2.dpad_up) {
-//                for (double i = pullupS.getPosition(); i < 1; i+=.1) {
-//                    pullupS.setPosition(i);
-//                }
+//            if(gamepad2.dpad_up && pullupS.getPosition <1) {
+//
+//                    pullupS.setPosition(pullupS.getPosition + .1);
+//
 //            }
-//            if(gamepad2.dpad_down) {
-//                for (double i = pullupS.getPosition(); i > -1; i-=.1) {
-//                    pullupS.setPosition(i);
-//                }
+//            if(gamepad2.dpad_down && pullupS.getPosition >-1) {
+//
+//                    pullupS.setPosition(pullupS.getPosition - .1);
+//
 //            }
 //
 //            //conveyerbelt
@@ -489,7 +525,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 //        //   telemetry.addData("claw", "claw:  " + String.format("%.2f", clawPosition));
 //        telemetry.addData("left tgt pwr",  "left  pwr: " + String.format("%.2f", left));
 //        telemetry.addData("right tgt pwr", "right pwr: " + String.format("%.2f", right));
-            telemetry.addData("left trigger", "left trigger pwr: " + String.format("%.2f", throttle));
+        //    telemetry.addData("left trigger", "left trigger pwr: " + String.format("%.2f", throttle));
 
         }
 
