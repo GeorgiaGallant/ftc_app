@@ -1,4 +1,12 @@
-/* Copyright (c) 2014 Qualcomm Technologies Inc
+package com.qualcomm.ftcrobotcontroller.QuantumMechanics;
+
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+/**
+ * Created by student on 1/29/16.
+ *
+    /* Copyright (c) 2014 Qualcomm Technologies Inc
 
 All rights reserved.
 
@@ -29,64 +37,61 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-package com.qualcomm.ftcrobotcontroller.QuantumMechanics;
+//    package com.qualcomm.ftcrobotcontroller.QuantumMechanics;
+//
+//    import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+//    import com.qualcomm.robotcore.hardware.DcMotor;
+//    import com.qualcomm.robotcore.hardware.Servo;
+//    import com.qualcomm.robotcore.util.Range;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
 
 
-
-/**
- * TeleOp Mode
- * <p>
- * Enables control of the robot via the gamepad
- */
-public class TeleOp extends OpMode  {
-
-    /*
-     * Note: the configuration of the servos is such that
-     * as the arm servo approaches 0, the arm position moves up (away from the floor).
-     * Also, as the claw servo approaches 0, the claw opens up (drops the game element).
+    /**
+     * TeleOp Mode
+     * <p>
+     * Enables control of the robot via the gamepad
      */
-    // TETRIX VALUES.
-    final static double ARM_MIN_RANGE  = 0.20;
-    final static double ARM_MAX_RANGE  = 0.90;
-    final static double CLAW_MIN_RANGE  = 0.20;
-    final static double CLAW_MAX_RANGE  = 0.7;
+    public class TeleOp extends OpMode {
+
+        /*
+         * Note: the configuration of the servos is such that
+         * as the arm servo approaches 0, the arm position moves up (away from the floor).
+         * Also, as the claw servo approaches 0, the claw opens up (drops the game element).
+         */
+        // TETRIX VALUES.
+        final static double ARM_MIN_RANGE  = 0.20;
+        final static double ARM_MAX_RANGE  = 0.90;
+        final static double CLAW_MIN_RANGE  = 0.20;
+        final static double CLAW_MAX_RANGE  = 0.7;
 
 
-    // position of the arm servo.
+        // position of the arm servo.
 //    double armPosition;
-    double spoolPosition;
-    double climbersPosition;
+        double spoolPosition;
+        double climbersPosition;
 
-    // amount to change the arm servo position.
-    double armDelta = 0.1;
+        // amount to change the arm servo position.
+        double armDelta = 0.1;
 
-    // position of the claw servo
-    double clawPosition;
+        // position of the claw servo
+        double clawPosition;
 
-    // amount to change the claw servo position by
-    double clawDelta = 0.1;
+        // amount to change the claw servo position by
+        double clawDelta = 0.1;
 
-    DcMotor mL1;
-    DcMotor mL2; //added
-   // DcMotor mL3;
-    // DcMotor mL4;
-    DcMotor mR1;
-    DcMotor mR2; //added
-  //  DcMotor elevator; //here
-  //  DcMotor mR3;
-    // DcMotor mR4;
-  //  DcMotor nom;
-   // DcMotor pullup;
-    //DcMotor conveyor;
+        DcMotor mL1;
 
+        DcMotor mR1;
 
- //   Servo zipline;
-    //Servo pullupS;
+        //  DcMotor elevator; //here
+        //  DcMotor mR3;
+        // DcMotor mR4;
+        //   DcMotor nom;
+        //  DcMotor pullup;
+        // DcMotor conveyor;
+
+        //     Servo zipline;
+        //  Servo pullupS;
 //    Servo rightDoor;
 //    Servo leftDoor;
 
@@ -101,20 +106,20 @@ public class TeleOp extends OpMode  {
 //    Servo tubeAngle;
 
 
-    /**
-     * Constructor
-     */
-    public TeleOp() {
+        /**
+         * Constructor
+         */
+        public TeleOp() {
 
-    }
+        }
 
-    /*
-     * Code to run when the op mode is first enabled goes here
-     *
-     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
-     */
-    @Override
-    public void init() {
+        /*
+         * Code to run when the op mode is first enabled goes here
+         *
+         * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
+         */
+        @Override
+        public void init() {
 
 
 		/*
@@ -122,42 +127,38 @@ public class TeleOp extends OpMode  {
 		 * that the names of the devices must match the names used when you
 		 * configured your robot and created the configuration file.
 		 */
-		
+
 		/*
 		 * For the demo Tetrix K9 bot we assume the following,
 		 *   There are two motors "motor_1" and "motor_2"
 		 *   "motor_1" is on the right side of the bot.
 		 *   "motor_2" is on the left side of the bot and reversed.
-		 *   
+		 *
 		 * We also assume that there are two servos "servo_1" and "servo_6"
-		 *    "servo_1" controls the arm joint of the manipulator.
+		 *    "servo_1" controls the arm joint of the manipulator.     jkhgkgukhuk
 		 *    "servo_6" controls the claw joint of the manipulator.
 		 */
 
             mL1 = hardwareMap.dcMotor.get("mL1");
-            mL2 = hardwareMap.dcMotor.get("mL2"); //added
-//      //  mL3 = hardwareMap.dcMotor.get("mL3");
+
 //        // mL4 = hardwareMap.dcMotor.get("mL4");
             mR1 = hardwareMap.dcMotor.get("mR1");
-            mR2 = hardwareMap.dcMotor.get("mR2"); //added
+
 //    //    elevator = hardwareMap.dcMotor.get("elevator");
-       // nom = hardwareMap.dcMotor.get("nom");
-        //pullup = hardwareMap.dcMotor.get("pullup");
-        //conveyor = hardwareMap.dcMotor.get("conveyor");
+//            nom = hardwareMap.dcMotor.get("nom");
+//            pullup = hardwareMap.dcMotor.get("pullup");
+//            conveyor = hardwareMap.dcMotor.get("conveyor");
 //     //   mR3 = hardwareMap.dcMotor.get("mR3");
 //        // mR4 = hardwareMap.dcMotor.get("mR4");
 //
 //
-        mR1.setDirection(DcMotor.Direction.FORWARD);
-        mL1.setDirection(DcMotor.Direction.FORWARD);
-     //   nom.setDirection(DcMotor.Direction.REVERSE);
-      //  pullup.setDirection(DcMotor.Direction.REVERSE);
-       // conveyor.setDirection(DcMotor.Direction.REVERSE);
+            mR1.setDirection(DcMotor.Direction.FORWARD);
+            mL1.setDirection(DcMotor.Direction.FORWARD);
+//            nom.setDirection(DcMotor.Direction.REVERSE);
+//            pullup.setDirection(DcMotor.Direction.REVERSE);
+//            conveyor.setDirection(DcMotor.Direction.REVERSE);
 
-        mL2.setDirection(DcMotor.Direction.FORWARD); //added
-        mR2.setDirection(DcMotor.Direction.FORWARD); //added
 
-//        //  mR3.setDirection(DcMotor.Direction.REVERSE);
 //        // mR4.setDirection(DcMotor.Direction.REVERSE);
 //        //Servo servo1;
 //       // servo1 = hardwareMap.servo.get("servozip");
@@ -166,16 +167,16 @@ public class TeleOp extends OpMode  {
 //            spool = hardwareMap.servo.get("spool");
 //            climbers = hardwareMap.servo.get("climbers");
 //            pinion = hardwareMap.servo.get("pinion");
-             //   zipline = hardwareMap.servo.get("zipline");
+            //   zipline = hardwareMap.servo.get("zipline");
 //
 //            //westley servos
 //            tubeRotate = hardwareMap.servo.get("tubeRotate");
 //            tubeLift = hardwareMap.servo.get("tubeLift");
 //            tubeAngle = hardwareMap.servo.get("tubeAngle");
 
-        //	claw = hardwareMap.servo.get("servo_6");
+            //	claw = hardwareMap.servo.get("servo_6");
 
-        // assign the starting position of the wrist and claw
+            // assign the starting position of the wrist and claw
 //        arm.setPosition(0);
 //        spool.setPosition(1);
 //        climbers.setPosition(0);
@@ -187,84 +188,141 @@ public class TeleOp extends OpMode  {
 //        tubeLift.setPosition(.493);
 //        tubeAngle.setPosition(.493);
 
-       // servo1.setPosition(0);
-       // servo1.setPosition(.8);
+            // servo1.setPosition(0);
+            // servo1.setPosition(.8);
 
 
-    }
-    //got some booleans that may or may not be used
+        }
+        //got some booleans that may or may not be used
 //    boolean armOut=false;
 //    boolean armPressed=false;
 //    boolean armHold = false;
 
-    /*
-     * This method will be called repeatedly in a loop
-     *
-     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#run()
-     */
-    @Override
-    public void loop() {
+        /*
+         * This method will be called repeatedly in a loop
+         *
+         * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#run()
+         */
+        @Override
+        public void loop() {
 
 		/*
 		 * Gamepad 1
-		 * 
+		 *
 		 * Gamepad 1 controls the motors via the left stick, and it controls the
 		 * wrist/claw via the a,b, x, y buttons
 		 */
 
-        // throttle: left_stick_y ranges from -1 to 1, where -1 is full up, and
-        // 1 is full down
-        // direction: left_stick_x ranges from -1 to 1, where -1 is full left
-        // and 1 is full right
-        float throttle = gamepad1.left_stick_x;
-        float direction = gamepad1.left_stick_y;
-        float right = throttle - direction;
-        float left = throttle + direction;
-//
+            // throttle: left_stick_y ranges from -1 to 1, where -1 is full up, and
+            // 1 is full down
+            // direction: left_stick_x ranges from -1 to 1, where -1 is full left
+            // and 1 is full right
+            float leftRight = gamepad1.left_stick_x;
+            float frontBack = gamepad1.left_stick_y;
+            //float right =
+            //float left =
+
+            if(leftRight<.2 && leftRight>-.2){
+                leftRight = 0;
+            }
+            if(frontBack<.2 && frontBack>-.2){
+                frontBack = 0;
+            }
 //
 //        // clip the right/left values so that the values never exceed +/- 1
-        right = Range.clip(right, -1, 1);
-        left = Range.clip(left, -1, 1);
+//            leftRight = Range.clip(leftRight, -1, 1);
+//            frontBack = Range.clip(frontBack, -1, 1);
 //
-//        //ramped turning so the robot doesn't jerk
 
 
 //        // scale the joystick value to make it easier to control
 //        // the robot more precisely at slower speeds.
-        right = (float)scaleInput(right);
-        left =  (float)scaleInput(left);
+//            right = (float)scaleInput(right);
+//            left =  (float)scaleInput(left);
 //
 //
 //        // write the values to the motors
-        mL1.setPower(right);
-        mL2.setPower(right); //added
+            if (frontBack >.2){ //go forward
+                mL1.setPower(frontBack);
+
+                mR1.setPower(frontBack);
+
+
+            }
+            else if (frontBack < -.2){ //go backward
+                mL1.setPower(frontBack);
+
+                mR1.setPower(frontBack);
+
+
+            }
+            else if (leftRight > .2){
+                mL1.setPower(leftRight);
+
+                mR1.setPower(-leftRight);
+
+
+            }
+            else if (leftRight < -.2){
+                mL1.setPower(leftRight);
+
+                mR1.setPower(-leftRight);
+
+            }
+            else {
+                mL1.setPower(0);
+
+                mR1.setPower(0);
+
+            }
+
+
+
+//            if(direction==1){
+//                for (double i = .3; i < 1; i+=.1) {
+//                    right = (float)scaleInput(-i);
+//                    left = (float)scaleInput(i);
+//                    mL1.setPower(right);
+//                    mL2.setPower(right);
+//                    mR1.setPower(left);
+//                    mR2.setPower(left);
+//                }
+//            }
+//            if(direction==-1){
+//                for (double i = -.3; i > -1; i-=.1) {
+//                    right = (float)scaleInput(i);
+//                    left = (float)scaleInput(-i);
+//                    mL1.setPower(right);
+//                    mL2.setPower(right);
+//                    mR1.setPower(left);
+//                    mR2.setPower(left);
+//                }
+//            }
 //     //   mL2.setPower(right);
 //      //  mL3.setPower(left);
 //        //  mL4.setPower(left);
-        mR1.setPower(left);
-        mR2.setPower(left); //added
-      //  mR2.setPower(left);
-      //  mR3.setPower(right);
-        // mR4.setPower(right);
+            //  mR2.setPower(left);
+            //  mR3.setPower(right);
+            // mR4.setPower(right);
 
 
-        //GAMEPAD 1
+            //GAMEPAD 1
 
-        //nom stuff
+            //nom stuff
 
-//        if(gamepad1.right_bumper) {
-//            nom.setPower(-.7);
-//        }
-//        else{
-//            nom.setPower(0);
-//        }
+//            if(gamepad1.right_bumper) {
+//                nom.setPower(-.7);
+//            }
+//            else{
+//                nom.setPower(0);
+//            }
 
 
 
-        //GAMEPAD 2
-        //Zipclimber arm
-        //when button(a) is pushed, toggle arm
-        //test position values!
+            //GAMEPAD 2
+            //Zipclimber arm
+            //when button(a) is pushed, toggle arm
+            //test position values!
        /* if(gamepad2.a) armPressed = true;
         if(gamepad2.a==false && armPressed==true) {
             armPressed = false;
@@ -273,46 +331,56 @@ public class TeleOp extends OpMode  {
             else arm.setPosition(0.0);
         } */
 
-        //Trying to do pullup
+            //Trying to do pullup
 
-//        if((gamepad1.right_bumper==true)&&(gamepad1.left_bumper==false)) {
-//            pullup.setPower(-.7);
-//        }
-//        if((gamepad1.left_bumper==true)&&(gamepad1.right_bumper==false)) {
-//            pullup.setPower(.7);
-//        }
-//        else{
-//            pullup.setPower(0);
-//        }
-////
-        //get input, clip, scale, set power
+//            if((gamepad1.right_bumper==true)&&(gamepad1.left_bumper==false)) {
+//                pullup.setPower(-.7);
+//            }
+//            if((gamepad1.left_bumper==true)&&(gamepad1.right_bumper==false)) {
+//                pullup.setPower(.7);
+//            }
+//            else{
+//                pullup.setPower(0);
+//            }
+//
+            //get input, clip, scale, set power
 //   float pullit = gamepad2.left_stick_y;
 //        pullit = Range.clip(pullit, -1, 1);
 //        pullit = (float)scaleInput(pullit);
 //        pullup.setPower(pullit);
 
-        //pullup Servo
-//        if (gamepad2.a){
-//            pullupS.setPosition(.5);
-//        }
-//        if (gamepad2.b){
-//            pullupS.setPosition(0);
-//        }
+            //pullup Servo
+//            if (gamepad2.a){
+//                pullupS.setPosition(.5);
+//            }
+//            if (gamepad2.b){
+//                pullupS.setPosition(0);
+//            }
+//            //pullup manual
+//            if(gamepad2.dpad_up && pullupS.getPosition <1) {
 //
+//                    pullupS.setPosition(pullupS.getPosition + .1);
 //
-//        //conveyerbelt
-//        if (gamepad2.dpad_right){
-//            conveyor.setPower(.8);
-//        }
-//        else{
-//            conveyor.setPower(0);
-//        }
-//        if (gamepad2.dpad_left){
-//            conveyor.setPower(-.8);
-//        }
-//        else{
-//            conveyor.setPower(0);
-//        }
+//            }
+//            if(gamepad2.dpad_down && pullupS.getPosition >-1) {
+//
+//                    pullupS.setPosition(pullupS.getPosition - .1);
+//
+//            }
+//
+//            //conveyerbelt
+//            if (gamepad2.dpad_right){
+//                conveyor.setPower(.8);
+//            }
+//            else{
+//                conveyor.setPower(0);
+//            }
+//            if (gamepad2.dpad_left){
+//                conveyor.setPower(-.8);
+//            }
+//            else{
+//                conveyor.setPower(0);
+//            }
 
 //        //Door
 //
@@ -421,14 +489,14 @@ public class TeleOp extends OpMode  {
 
 
 
-        // update the position of the arm
+            // update the position of the arm
 
-        // clip the position values so that they never exceed their allowed range.
+            // clip the position values so that they never exceed their allowed range.
 //        armPosition = Range.clip(armPosition, ARM_MIN_RANGE, ARM_MAX_RANGE);
 //        clawPosition = Range.clip(clawPosition, CLAW_MIN_RANGE, CLAW_MAX_RANGE);
 
-        // write position values to the wrist and claw servo
-		//arm.setPosition(armPosition);
+            // write position values to the wrist and claw servo
+            //arm.setPosition(armPosition);
 //		claw.setPosition(clawPosition);
 
 
@@ -449,53 +517,55 @@ public class TeleOp extends OpMode  {
 //        //   telemetry.addData("claw", "claw:  " + String.format("%.2f", clawPosition));
 //        telemetry.addData("left tgt pwr",  "left  pwr: " + String.format("%.2f", left));
 //        telemetry.addData("right tgt pwr", "right pwr: " + String.format("%.2f", right));
-          telemetry.addData("left trigger", "left trigger pwr: " + String.format("%.2f", throttle));
+            //    telemetry.addData("left trigger", "left trigger pwr: " + String.format("%.2f", throttle));
+
+        }
+
+        /*
+         * Code to run when the op mode is first disabled goes here
+         *
+         * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#stop()
+         */
+        @Override
+        public void stop() {
+
+        }
+
+
+        /*
+         * This method scales the joystick input so for low joystick values, the
+         * scaled value is less than linear.  This is to make it easier to drive
+         * the robot more precisely at slower speeds.
+         */
+        double scaleInput(double dVal)  {
+            double[] scaleArray = { 0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24,
+                    0.30, 0.36, 0.43, 0.50, 0.60, 0.72, 0.85, 1.00, 1.00 }; //took out 0.05, 0.09, 0.10
+
+            // get the corresponding index for the scaleInput array.
+            int index = (int) (dVal * 16.0);
+
+            // index should be positive.
+            if (index < 0) {
+                index = -index;
+            }
+
+            // index cannot exceed size of array minus 1.
+            if (index > 16) {
+                index = 16;
+            }
+
+            // get value from the array.
+            double dScale = 0.0;
+            if (dVal < 0) {
+                dScale = -scaleArray[index];
+            } else {
+                dScale = scaleArray[index];
+            }
+
+            // return scaled value.
+            return dScale;
+        }
 
     }
 
-    /*
-     * Code to run when the op mode is first disabled goes here
-     *
-     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#stop()
-     */
-    @Override
-    public void stop() {
 
-    }
-
-
-    /*
-     * This method scales the joystick input so for low joystick values, the
-     * scaled value is less than linear.  This is to make it easier to drive
-     * the robot more precisely at slower speeds.
-     */
-    double scaleInput(double dVal)  {
-        double[] scaleArray = { 0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24,
-                0.30, 0.36, 0.43, 0.50, 0.60, 0.72, 0.85, 1.00, 1.00 }; //took out 0.05, 0.09, 0.10
-
-        // get the corresponding index for the scaleInput array.
-        int index = (int) (dVal * 16.0);
-
-        // index should be positive.
-        if (index < 0) {
-            index = -index;
-        }
-
-        // index cannot exceed size of array minus 1.
-        if (index > 16) {
-            index = 16;
-        }
-
-        // get value from the array.
-        double dScale = 0.0;
-        if (dVal < 0) {
-            dScale = -scaleArray[index];
-        } else {
-            dScale = scaleArray[index];
-        }
-
-        // return scaled value.
-        return dScale;
-    }
-
-}
