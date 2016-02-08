@@ -156,8 +156,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 //            spool = hardwareMap.servo.get("spool");
 //            climbers = hardwareMap.servo.get("climbers");
 //            pinion = hardwareMap.servo.get("pinion");
-            //   zipline = hardwareMap.servo.get("zipline");
-//
+            //   zipline = hardwareMap.servo.get("zipline")
 
 
             //	claw = hardwareMap.servo.get("servo_6");
@@ -190,7 +189,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
          */
 
 
-        double hangPos = .5;
+        double hangPos = .1;
         double maxChangeRate = .01;
 
         @Override
@@ -305,10 +304,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 //                    pullupS.setPosition(val - .1);
 //            }
 
-            if(hangPos>.9) hangPos=.9;
-            if(hangPos<-.9) hangPos=-.9;
-            if (gamepad2.dpad_up) hangPos += maxChangeRate;
-            else if (gamepad2.dpad_down) hangPos -= maxChangeRate;
+            if(hangPos>1) hangPos=1;
+            if(hangPos<.01) hangPos=.01;
+            if (gamepad2.dpad_down) hangPos += maxChangeRate;
+            else if (gamepad2.dpad_up) hangPos -= maxChangeRate;
             pullupS.setPosition(hangPos);
 
             //conveyerbelt
