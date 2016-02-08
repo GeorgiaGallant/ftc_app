@@ -2,6 +2,7 @@ package com.qualcomm.ftcrobotcontroller.QuantumMechanics;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * Created by student on 1/29/16.
@@ -38,7 +39,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 //    package com.qualcomm.ftcrobotcontroller.QuantumMechanics;
-//
+//    /////
 //    import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 //    import com.qualcomm.robotcore.hardware.DcMotor;
 //    import com.qualcomm.robotcore.hardware.Servo;
@@ -80,30 +81,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
         double clawDelta = 0.1;
 
         DcMotor mL1;
-
         DcMotor mR1;
-
-        //  DcMotor elevator; //here
-        //  DcMotor mR3;
-        // DcMotor mR4;
-        //   DcMotor nom;
-        //  DcMotor pullup;
-        // DcMotor conveyor;
+        DcMotor nom;
+        DcMotor pullup;
+        DcMotor conveyor;
 
         //     Servo zipline;
-        //  Servo pullupS;
+        Servo pullupS;
 //    Servo rightDoor;
 //    Servo leftDoor;
 
-//    Servo spool;
+
 ////    Servo arm;
 //    Servo climbers;
 //    Servo pinion;
-//
-//    //westley servos
-//    Servo tubeRotate;
-//    Servo tubeLift;
-//    Servo tubeAngle;
+
 
 
         /**
@@ -140,26 +132,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 		 */
 
             mL1 = hardwareMap.dcMotor.get("mL1");
-
-//        // mL4 = hardwareMap.dcMotor.get("mL4");
             mR1 = hardwareMap.dcMotor.get("mR1");
 
 //    //    elevator = hardwareMap.dcMotor.get("elevator");
-//            nom = hardwareMap.dcMotor.get("nom");
-//            pullup = hardwareMap.dcMotor.get("pullup");
-//            conveyor = hardwareMap.dcMotor.get("conveyor");
-//     //   mR3 = hardwareMap.dcMotor.get("mR3");
-//        // mR4 = hardwareMap.dcMotor.get("mR4");
+            nom = hardwareMap.dcMotor.get("nom");
+            pullup = hardwareMap.dcMotor.get("pullup");
+            conveyor = hardwareMap.dcMotor.get("conveyor");
+            pullupS = hardwareMap.servo.get("pullupS");
 //
 //
             mR1.setDirection(DcMotor.Direction.FORWARD);
             mL1.setDirection(DcMotor.Direction.FORWARD);
-//            nom.setDirection(DcMotor.Direction.REVERSE);
-//            pullup.setDirection(DcMotor.Direction.REVERSE);
-//            conveyor.setDirection(DcMotor.Direction.REVERSE);
+            nom.setDirection(DcMotor.Direction.FORWARD);
+            pullup.setDirection(DcMotor.Direction.REVERSE);
+            conveyor.setDirection(DcMotor.Direction.FORWARD);
 
 
-//        // mR4.setDirection(DcMotor.Direction.REVERSE);
+
 //        //Servo servo1;
 //       // servo1 = hardwareMap.servo.get("servozip");
 //        double servo1Position;
@@ -169,10 +158,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 //            pinion = hardwareMap.servo.get("pinion");
             //   zipline = hardwareMap.servo.get("zipline");
 //
-//            //westley servos
-//            tubeRotate = hardwareMap.servo.get("tubeRotate");
-//            tubeLift = hardwareMap.servo.get("tubeLift");
-//            tubeAngle = hardwareMap.servo.get("tubeAngle");
+
 
             //	claw = hardwareMap.servo.get("servo_6");
 
@@ -183,10 +169,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 //        pinion.setPosition(.493);
 
 //        zipline.setPosition(.493);
-////        //westley servos
-//        tubeRotate.setPosition(.493);
-//        tubeLift.setPosition(.493);
-//        tubeAngle.setPosition(.493);
+
 
             // servo1.setPosition(0);
             // servo1.setPosition(.8);
@@ -202,7 +185,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
          * This method will be called repeatedly in a loop
          *
          * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#run()
+         *
+         *
          */
+
+
+        double hangPos = .5;
+        double maxChangeRate = .01;
+
         @Override
         public void loop() {
 
@@ -217,8 +207,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
             // 1 is full down
             // direction: left_stick_x ranges from -1 to 1, where -1 is full left
             // and 1 is full right
-            float leftRight = gamepad1.left_stick_x;
-            float frontBack = gamepad1.left_stick_y;
+            float frontBack = gamepad1.left_stick_x;
+            float leftRight = gamepad1.left_stick_y;
             //float right =
             //float left =
 
@@ -242,80 +232,36 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 //
 //
 //        // write the values to the motors
+            //gamepad 1
             if (frontBack >.2){ //go forward
                 mL1.setPower(frontBack);
-
                 mR1.setPower(frontBack);
-
-
             }
             else if (frontBack < -.2){ //go backward
                 mL1.setPower(frontBack);
-
                 mR1.setPower(frontBack);
-
-
             }
             else if (leftRight > .2){
                 mL1.setPower(leftRight);
-
                 mR1.setPower(-leftRight);
-
-
             }
             else if (leftRight < -.2){
                 mL1.setPower(leftRight);
-
                 mR1.setPower(-leftRight);
-
             }
             else {
                 mL1.setPower(0);
-
                 mR1.setPower(0);
-
             }
-
-
-
-//            if(direction==1){
-//                for (double i = .3; i < 1; i+=.1) {
-//                    right = (float)scaleInput(-i);
-//                    left = (float)scaleInput(i);
-//                    mL1.setPower(right);
-//                    mL2.setPower(right);
-//                    mR1.setPower(left);
-//                    mR2.setPower(left);
-//                }
-//            }
-//            if(direction==-1){
-//                for (double i = -.3; i > -1; i-=.1) {
-//                    right = (float)scaleInput(i);
-//                    left = (float)scaleInput(-i);
-//                    mL1.setPower(right);
-//                    mL2.setPower(right);
-//                    mR1.setPower(left);
-//                    mR2.setPower(left);
-//                }
-//            }
-//     //   mL2.setPower(right);
-//      //  mL3.setPower(left);
-//        //  mL4.setPower(left);
-            //  mR2.setPower(left);
-            //  mR3.setPower(right);
-            // mR4.setPower(right);
-
-
-            //GAMEPAD 1
 
             //nom stuff
 
-//            if(gamepad1.right_bumper) {
-//                nom.setPower(-.7);
-//            }
-//            else{
-//                nom.setPower(0);
-//            }
+            if(gamepad2.a) {
+                nom.setPower(-.7);
+            }
+            else{
+                nom.setPower(0);
+            }
 
 
 
@@ -333,54 +279,48 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
             //Trying to do pullup
 
-//            if((gamepad1.right_bumper==true)&&(gamepad1.left_bumper==false)) {
-//                pullup.setPower(-.7);
-//            }
-//            if((gamepad1.left_bumper==true)&&(gamepad1.right_bumper==false)) {
-//                pullup.setPower(.7);
-//            }
-//            else{
-//                pullup.setPower(0);
-//            }
-//
-            //get input, clip, scale, set power
-//   float pullit = gamepad2.left_stick_y;
-//        pullit = Range.clip(pullit, -1, 1);
-//        pullit = (float)scaleInput(pullit);
-//        pullup.setPower(pullit);
+            if(gamepad2.right_bumper) {
+                pullup.setPower(-.7);
+            }
+            else if(gamepad2.left_bumper) {
+                pullup.setPower(.7);
+            }
+            else{
+                pullup.setPower(0);
+            }
 
             //pullup Servo
-//            if (gamepad2.a){
+//            if (gamepad2.b){
 //                pullupS.setPosition(.5);
 //            }
-//            if (gamepad2.b){
-//                pullupS.setPosition(0);
+//            if (gamepad2.x){
+//                pullupS.setPosition(-.5);
 //            }
 //            //pullup manual
-//            if(gamepad2.dpad_up && pullupS.getPosition <1) {
-//
-//                    pullupS.setPosition(pullupS.getPosition + .1);
-//
+//            double val = pullupS.getPosition();
+//            if(gamepad2.dpad_up && val <1) {
+//                    pullupS.setPosition(val + .1);
 //            }
-//            if(gamepad2.dpad_down && pullupS.getPosition >-1) {
-//
-//                    pullupS.setPosition(pullupS.getPosition - .1);
-//
+//            if(gamepad2.dpad_down && val >-1) {
+//                    pullupS.setPosition(val - .1);
 //            }
-//
-//            //conveyerbelt
-//            if (gamepad2.dpad_right){
-//                conveyor.setPower(.8);
-//            }
-//            else{
-//                conveyor.setPower(0);
-//            }
-//            if (gamepad2.dpad_left){
-//                conveyor.setPower(-.8);
-//            }
-//            else{
-//                conveyor.setPower(0);
-//            }
+
+            if(hangPos>.9) hangPos=.9;
+            if(hangPos<-.9) hangPos=-.9;
+            if (gamepad2.dpad_up) hangPos += maxChangeRate;
+            else if (gamepad2.dpad_down) hangPos -= maxChangeRate;
+            pullupS.setPosition(hangPos);
+
+            //conveyerbelt
+            if (gamepad2.dpad_right){
+                conveyor.setPower(.8);
+            }
+            else if (gamepad2.dpad_left){
+                conveyor.setPower(-.8);
+            }
+            else{
+                conveyor.setPower(0);
+            }
 
 //        //Door
 //
