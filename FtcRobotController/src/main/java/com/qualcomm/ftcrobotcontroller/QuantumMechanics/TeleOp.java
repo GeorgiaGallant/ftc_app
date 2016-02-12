@@ -59,45 +59,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
          * as the arm servo approaches 0, the arm position moves up (away from the floor).
          * Also, as the claw servo approaches 0, the claw opens up (drops the game element).
          */
-        // TETRIX VALUES.
-        final static double ARM_MIN_RANGE  = 0.20;
-        final static double ARM_MAX_RANGE  = 0.90;
-        final static double CLAW_MIN_RANGE  = 0.20;
-        final static double CLAW_MAX_RANGE  = 0.7;
-
-
-        // position of the arm servo.
-//    double armPosition;
-        double spoolPosition;
-        double climbersPosition;
-
-        // amount to change the arm servo position.
-        double armDelta = 0.1;
-
-        // position of the claw servo
-        double clawPosition;
-
-        // amount to change the claw servo position by
-        double clawDelta = 0.1;
-
+        // TETRIX VALUES
         DcMotor mL1;
         DcMotor mR1;
         DcMotor nom;
         DcMotor pullup;
         DcMotor conveyor;
-
-        //     Servo zipline;
+        Servo ziplineL;
+        Servo ziplineR;
         Servo pullupS;
-//    Servo rightDoor;
-//    Servo leftDoor;
+        Servo rightDoor;
+        Servo leftDoor;
 
-
-////    Servo arm;
-//    Servo climbers;
-//    Servo pinion;
-
-
-
+        //values for the pullup
+        double hangPos = .1;
+        double maxChangeRate = .01;
         /**
          * Constructor
          */
@@ -130,56 +106,33 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 		 *    "servo_1" controls the arm joint of the manipulator.     jkhgkgukhuk
 		 *    "servo_6" controls the claw joint of the manipulator.
 		 */
-
+            //getting motors
             mL1 = hardwareMap.dcMotor.get("mL1");
             mR1 = hardwareMap.dcMotor.get("mR1");
-
-//    //    elevator = hardwareMap.dcMotor.get("elevator");
             nom = hardwareMap.dcMotor.get("nom");
             pullup = hardwareMap.dcMotor.get("pullup");
             conveyor = hardwareMap.dcMotor.get("conveyor");
+
+            //getting servos
             pullupS = hardwareMap.servo.get("pullupS");
-//
-//
+            rightDoor = hardwareMap.servo.get("rightDoor");
+            leftDoor = hardwareMap.servo.get("leftDoor");
+            ziplineL = hardwareMap.servo.get("ziplineL");
+            ziplineR = hardwareMap.servo.get("ziplineR");
+
+            //setting motor directions
             mR1.setDirection(DcMotor.Direction.FORWARD);
             mL1.setDirection(DcMotor.Direction.FORWARD);
             nom.setDirection(DcMotor.Direction.FORWARD);
             pullup.setDirection(DcMotor.Direction.REVERSE);
             conveyor.setDirection(DcMotor.Direction.FORWARD);
 
-
-
-//        //Servo servo1;
-//       // servo1 = hardwareMap.servo.get("servozip");
-//        double servo1Position;
-//        	arm = hardwareMap.servo.get("servozip");
-//            spool = hardwareMap.servo.get("spool");
-//            climbers = hardwareMap.servo.get("climbers");
-//            pinion = hardwareMap.servo.get("pinion");
-            //   zipline = hardwareMap.servo.get("zipline")
-
-
-            //	claw = hardwareMap.servo.get("servo_6");
-
-            // assign the starting position of the wrist and claw
-//        arm.setPosition(0);
-//        spool.setPosition(1);
-//        climbers.setPosition(0);
-//        pinion.setPosition(.493);
-
-//        zipline.setPosition(.493);
-
-
-            // servo1.setPosition(0);
-            // servo1.setPosition(.8);
-
-
+            //set servo positions
+            rightDoor.setPosition(0);
+            leftDoor.setPosition(0);
+            ziplineL.setPosition(0);
+            ziplineR.setPosition(0);
         }
-        //got some booleans that may or may not be used
-//    boolean armOut=false;
-//    boolean armPressed=false;
-//    boolean armHold = false;
-
         /*
          * This method will be called repeatedly in a loop
          *
@@ -188,13 +141,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
          *
          */
 
-
-        double hangPos = .1;
-        double maxChangeRate = .01;
-
         @Override
         public void loop() {
-
 		/*
 		 * Gamepad 1
 		 *
@@ -202,35 +150,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 		 * wrist/claw via the a,b, x, y buttons
 		 */
 
-            // throttle: left_stick_y ranges from -1 to 1, where -1 is full up, and
-            // 1 is full down
-            // direction: left_stick_x ranges from -1 to 1, where -1 is full left
-            // and 1 is full right
+            //frontback controls the robot's front and back direction
             float frontBack = gamepad1.left_stick_x;
+            //leftright controls the robot's left and right direction
             float leftRight = gamepad1.left_stick_y;
-            //float right =
-            //float left =
 
+            //make sure the motors don't stall!
             if(leftRight<.2 && leftRight>-.2){
                 leftRight = 0;
             }
             if(frontBack<.2 && frontBack>-.2){
                 frontBack = 0;
             }
-//
-//        // clip the right/left values so that the values never exceed +/- 1
-//            leftRight = Range.clip(leftRight, -1, 1);
-//            frontBack = Range.clip(frontBack, -1, 1);
-//
 
-
-//        // scale the joystick value to make it easier to control
-//        // the robot more precisely at slower speeds.
-//            right = (float)scaleInput(right);
-//            left =  (float)scaleInput(left);
-//
-//
-//        // write the values to the motors
+            // write the values to the motors
             //gamepad 1
             if (frontBack >.2){ //go forward
                 mL1.setPower(frontBack);
@@ -240,21 +173,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
                 mL1.setPower(frontBack);
                 mR1.setPower(frontBack);
             }
-            else if (leftRight > .2){
+            else if (leftRight > .2){ //goes left
                 mL1.setPower(leftRight);
                 mR1.setPower(-leftRight);
             }
-            else if (leftRight < -.2){
+            else if (leftRight < -.2){ //goes right
                 mL1.setPower(leftRight);
                 mR1.setPower(-leftRight);
             }
-            else {
+            else { //keeps robot still
                 mL1.setPower(0);
                 mR1.setPower(0);
             }
 
-            //nom stuff
+            //GAMEPAD 2
 
+            //nom control
             if(gamepad2.a) {
                 nom.setPower(-.7);
             }
@@ -262,22 +196,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
                 nom.setPower(0);
             }
 
-
-
-            //GAMEPAD 2
-            //Zipclimber arm
-            //when button(a) is pushed, toggle arm
-            //test position values!
-       /* if(gamepad2.a) armPressed = true;
-        if(gamepad2.a==false && armPressed==true) {
-            armPressed = false;
-            armOut = true;
-            if(armOut==true) arm.setPosition(0.92);
-            else arm.setPosition(0.0);
-        } */
-
-            //Trying to do pullup
-
+            //Do a pullup
             if(gamepad2.right_bumper) {
                 pullup.setPower(-.7);
             }
@@ -288,29 +207,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
                 pullup.setPower(0);
             }
 
-            //pullup Servo
-//            if (gamepad2.b){
-//                pullupS.setPosition(.5);
-//            }
-//            if (gamepad2.x){
-//                pullupS.setPosition(-.5);
-//            }
-//            //pullup manual
-//            double val = pullupS.getPosition();
-//            if(gamepad2.dpad_up && val <1) {
-//                    pullupS.setPosition(val + .1);
-//            }
-//            if(gamepad2.dpad_down && val >-1) {
-//                    pullupS.setPosition(val - .1);
-//            }
-//      jdfkasjdksla
+            //manual pullupS control
             if(hangPos>1) hangPos=1;
             if(hangPos<.01) hangPos=.01;
             if (gamepad2.dpad_down) hangPos += maxChangeRate;
             else if (gamepad2.dpad_up) hangPos -= maxChangeRate;
             pullupS.setPosition(hangPos);
 
-            //conveyerbelt
+            //conveyerbelt control
             if (gamepad2.dpad_right){
                 conveyor.setPower(.8);
             }
@@ -321,118 +225,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
                 conveyor.setPower(0);
             }
 
-//        //Door
-//
-//        if (gamepad2.b){
-//            rightDoor.setPosition(.);
-//        }
-//
+            //zipline positions
 
-
-//        if(gamepad1.right_trigger > 0){
-//            zipline.setPosition(1);
-//        }
-//       if(gamepad2.left_bumper) {
-//            arm.setPosition(0.6);
-//           telemetry.addData("button a pressed", " ");
-//        }
-//        else {
-//           arm.setPosition(0);
-//       }
-//        if(gamepad2.right_bumper) {
-//            spool.setPosition(0.0);
-//        }
-//        else {
-//            spool.setPosition(1);
-//        }
-//
-////        if(gamepad2.a) {
-////            climbers.setPosition(1);
-////            telemetry.addData("button a pressed", " ");
-////        }
-////        else {
-////            climbers.setPosition(.1);
-////        }
-////        if(gamepad2.b){
-////            pinion.setPosition(1);
-////        }
-////        else{
-////            pinion.setPosition(.35);
-////        }
-//
-//        //westley code
-//        if(gamepad2.dpad_up){
-//            tubeLift.setDirection(Servo.Direction.FORWARD);
-//            tubeLift.setPosition(.7);
-//            telemetry.addData("PRESSED!!!!", " ");
-//        }
-//        else if(gamepad2.dpad_down){
-//            tubeLift.setDirection(Servo.Direction.REVERSE);
-//            tubeLift.setPosition(.7);
-//        }
-//        else{
-//            tubeLift.setPosition(.493);
-//        }
-//
-//        if(gamepad2.dpad_left){
-//            tubeRotate.setDirection(Servo.Direction.FORWARD);
-//            telemetry.addData("left", 0);
-//            tubeRotate.setPosition(.55);
-//        }
-//        else if(gamepad2.dpad_right){
-//            tubeRotate.setDirection(Servo.Direction.REVERSE);
-//            telemetry.addData("right", 0);
-//            tubeRotate.setPosition(.55);
-//        }
-//        else if(gamepad2.a){
-//            telemetry.addData("freeze", 0);
-//            tubeRotate.setDirection(Servo.Direction.REVERSE);
-//            tubeRotate.setPosition(.75);
-//            tubeRotate.setDirection(Servo.Direction.FORWARD);
-//            tubeRotate.setPosition(.75);
-//            tubeRotate.setPosition(.493);
-//
-//        }
-//        else{
-//            tubeRotate.setPosition(.493);
-//        }
-//
-//        if(gamepad2.left_stick_y < 0){
-//            tubeAngle.setDirection(Servo.Direction.REVERSE);
-//            tubeAngle.setPosition(.55);
-//        }
-//        else if(gamepad2.left_stick_y > 0){
-//            tubeAngle.setDirection(Servo.Direction.FORWARD);
-//            tubeAngle.setPosition(.55);
-//        }
-//        else{
-//            tubeAngle.setPosition(.493);
-//        }
-//
-
-
-
-
-//        if(gamepad2.a) armHold = true;
-//        if(armHold==true) arm.setPosition(0.92);
-//        if(armHold==false) arm.setPosition(0.0);
-
-
-
-
-
-
-
-
-
-
-
-
-            // update the position of the arm
+            //door positions
 
             // clip the position values so that they never exceed their allowed range.
-//        armPosition = Range.clip(armPosition, ARM_MIN_RANGE, ARM_MAX_RANGE);
-//        clawPosition = Range.clip(clawPosition, CLAW_MIN_RANGE, CLAW_MAX_RANGE);
+            // armPosition = Range.clip(armPosition, ARM_MIN_RANGE, ARM_MAX_RANGE);
+            // clawPosition = Range.clip(clawPosition, CLAW_MIN_RANGE, CLAW_MAX_RANGE);
 
             // write position values to the wrist and claw servo
             //arm.setPosition(armPosition);
