@@ -65,15 +65,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
         DcMotor nom;
         DcMotor pullup;
         DcMotor conveyor;
-        Servo ziplineL;
-        Servo ziplineR;
+        DcMotor nomF;
+//        Servo ziplineL;
+//        Servo ziplineR;
         Servo pullupS;
-        Servo rightDoor;
-        Servo leftDoor;
+//        Servo rightDoor;
+//        Servo leftDoor;
 
         //values for the pullup
         double hangPos = .1;
         double maxChangeRate = .01;
+//        double motorChangeRate = .05;
+        boolean door = false;
+        boolean zipR = false;
+        boolean zipL = false;
         /**
          * Constructor
          */
@@ -112,26 +117,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
             nom = hardwareMap.dcMotor.get("nom");
             pullup = hardwareMap.dcMotor.get("pullup");
             conveyor = hardwareMap.dcMotor.get("conveyor");
+            nomF = hardwareMap.dcMotor.get("nomF");
 
             //getting servos
             pullupS = hardwareMap.servo.get("pullupS");
-            rightDoor = hardwareMap.servo.get("rightDoor");
-            leftDoor = hardwareMap.servo.get("leftDoor");
-            ziplineL = hardwareMap.servo.get("ziplineL");
-            ziplineR = hardwareMap.servo.get("ziplineR");
+//            rightDoor = hardwareMap.servo.get("rightDoor");
+//            leftDoor = hardwareMap.servo.get("leftDoor");
+//            ziplineL = hardwareMap.servo.get("ziplineL");
+//            ziplineR = hardwareMap.servo.get("ziplineR");
 
             //setting motor directions
             mR1.setDirection(DcMotor.Direction.FORWARD);
             mL1.setDirection(DcMotor.Direction.FORWARD);
-            nom.setDirection(DcMotor.Direction.FORWARD);
+            nom.setDirection(DcMotor.Direction.REVERSE);
             pullup.setDirection(DcMotor.Direction.REVERSE);
             conveyor.setDirection(DcMotor.Direction.FORWARD);
 
             //set servo positions
-            rightDoor.setPosition(0);
-            leftDoor.setPosition(0);
-            ziplineL.setPosition(0);
-            ziplineR.setPosition(0);
+//            rightDoor.setPosition(0);
+//            leftDoor.setPosition(0);
+//            ziplineL.setPosition(0);
+//            ziplineR.setPosition(0);
         }
         /*
          * This method will be called repeatedly in a loop
@@ -150,10 +156,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 		 * wrist/claw via the a,b, x, y buttons
 		 */
 
+
+            //naive driving
+
             //frontback controls the robot's front and back direction
             float frontBack = gamepad1.left_stick_x;
             //leftright controls the robot's left and right direction
-            float leftRight = gamepad1.left_stick_y;
+            float leftRight = gamepad1.right_stick_y;
 
             //make sure the motors don't stall!
             if(leftRight<.2 && leftRight>-.2){
@@ -186,14 +195,33 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
                 mR1.setPower(0);
             }
 
+            //arc turning
+            //the idea behind this is so that we can do gradual turns as opposed to only ninety degree turns
+            //left right
+//            float LRr = gamepad1.right_stick_y;
+//            if(LRr > .5) {
+//                mL1.setPower(1);
+//                mR1.setPower(1);
+//                mR1.setPower(mR1.getPower() - motorChangeRate);
+//                if(mR1.getPower() < .7) mR1.setPower(.7);
+//            }
+//            if(LRr < -.5) {
+//                mR1.setPower(1);
+//                mL1.setPower(1);
+//                mL1.setPower(mL1.getPower() - motorChangeRate);
+//                if(mR1.getPower() < .7) mR1.setPower(.7);
+//            }
+
             //GAMEPAD 2
 
             //nom control
             if(gamepad2.a) {
-                nom.setPower(-.7);
+                nom.setPower(1);
+                nomF.setPower(1);
             }
             else{
                 nom.setPower(0);
+                nomF.setPower(0);
             }
 
             //Do a pullup
@@ -226,18 +254,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
             }
 
             //zipline positions
-
-            //door positions
-
-            // clip the position values so that they never exceed their allowed range.
-            // armPosition = Range.clip(armPosition, ARM_MIN_RANGE, ARM_MAX_RANGE);
-            // clawPosition = Range.clip(clawPosition, CLAW_MIN_RANGE, CLAW_MAX_RANGE);
-
-            // write position values to the wrist and claw servo
-            //arm.setPosition(armPosition);
-//		claw.setPosition(clawPosition);
-
-
+            //right
+//            if(gamepad2.b && ziplineR.getPosition()==0) zipR = true;
+//            if(gamepad2.b && ziplineR.getPosition()==1) zipR = false;
+//            if(zipR) ziplineR.setPosition(1);
+//            else ziplineR.setPosition(0);
+//            //left
+//            if(gamepad2.x && ziplineL.getPosition()==0) zipL = true;
+//            if(gamepad2.x && ziplineL.getPosition()==1) zipL = false;
+//            if(zipL) ziplineL.setPosition(1);
+//            else ziplineL.setPosition(0);
+//
+//            //door positions
+//            if(gamepad2.y) door = !door;
+//            if(gamepad2.y && rightDoor.getPosition()==0 && leftDoor.getPosition()==0) door = true;
+//            if(gamepad2.y && rightDoor.getPosition()==.5 && leftDoor.getPosition()==.5) door = false;
+//            //right
+//            if(door) rightDoor.setPosition(.5);
+//            else rightDoor.setPosition(0);
+//            //left
+//            if(door) leftDoor.setPosition(.5);
+//            else leftDoor.setPosition(0);
 
 		/*
 		 * Send telemetry data back to driver station. Note that if we are using
@@ -268,42 +305,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
         public void stop() {
 
         }
-
-
-        /*
-         * This method scales the joystick input so for low joystick values, the
-         * scaled value is less than linear.  This is to make it easier to drive
-         * the robot more precisely at slower speeds.
-         */
-        double scaleInput(double dVal)  {
-            double[] scaleArray = { 0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24,
-                    0.30, 0.36, 0.43, 0.50, 0.60, 0.72, 0.85, 1.00, 1.00 }; //took out 0.05, 0.09, 0.10
-
-            // get the corresponding index for the scaleInput array.
-            int index = (int) (dVal * 16.0);
-
-            // index should be positive.
-            if (index < 0) {
-                index = -index;
-            }
-
-            // index cannot exceed size of array minus 1.
-            if (index > 16) {
-                index = 16;
-            }
-
-            // get value from the array.
-            double dScale = 0.0;
-            if (dVal < 0) {
-                dScale = -scaleArray[index];
-            } else {
-                dScale = scaleArray[index];
-            }
-
-            // return scaled value.
-            return dScale;
-        }
-
     }
 
 
