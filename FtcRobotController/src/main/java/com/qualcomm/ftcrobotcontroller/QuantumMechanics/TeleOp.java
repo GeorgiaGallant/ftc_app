@@ -66,11 +66,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
         DcMotor pullup;
         DcMotor conveyor;
         DcMotor nomF;
-//        Servo ziplineL;
-//        Servo ziplineR;
+        Servo ziplineL;
+        Servo ziplineR;
         Servo pullupS;
-//        Servo rightDoor;
-//        Servo leftDoor;
+        Servo rightDoor;
+        Servo leftDoor;
 
         //values for the pullup
         double hangPos = .1;
@@ -121,23 +121,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
             //getting servos
             pullupS = hardwareMap.servo.get("pullupS");
-//            rightDoor = hardwareMap.servo.get("rightDoor");
-//            leftDoor = hardwareMap.servo.get("leftDoor");
-//            ziplineL = hardwareMap.servo.get("ziplineL");
-//            ziplineR = hardwareMap.servo.get("ziplineR");
+            rightDoor = hardwareMap.servo.get("rightDoor");
+            leftDoor = hardwareMap.servo.get("leftDoor");
+            ziplineL = hardwareMap.servo.get("ziplineL");
+            ziplineR = hardwareMap.servo.get("ziplineR");
 
             //setting motor directions
             mR1.setDirection(DcMotor.Direction.FORWARD);
-            mL1.setDirection(DcMotor.Direction.FORWARD);
+            mL1.setDirection(DcMotor.Direction.REVERSE);
             nom.setDirection(DcMotor.Direction.REVERSE);
             pullup.setDirection(DcMotor.Direction.REVERSE);
             conveyor.setDirection(DcMotor.Direction.FORWARD);
 
             //set servo positions
-//            rightDoor.setPosition(0);
-//            leftDoor.setPosition(0);
-//            ziplineL.setPosition(0);
-//            ziplineR.setPosition(0);
+            leftDoor.setPosition(.8);
+            rightDoor.setPosition(0);
+            ziplineL.setPosition(1);
+            ziplineR.setPosition(0);
         }
         /*
          * This method will be called repeatedly in a loop
@@ -160,9 +160,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
             //naive driving
 
             //frontback controls the robot's front and back direction
-            float frontBack = gamepad1.left_stick_x;
+            float leftRight = gamepad1.left_stick_x;
             //leftright controls the robot's left and right direction
-            float leftRight = gamepad1.right_stick_y;
+            float frontBack = gamepad1.left_stick_y;
 
             //make sure the motors don't stall!
             if(leftRight<.2 && leftRight>-.2){
@@ -175,24 +175,29 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
             // write the values to the motors
             //gamepad 1
             if (frontBack >.2){ //go forward
-                mL1.setPower(frontBack);
-                mR1.setPower(frontBack);
+                mL1.setPower(-1);
+                mR1.setPower(-1);
             }
             else if (frontBack < -.2){ //go backward
-                mL1.setPower(frontBack);
-                mR1.setPower(frontBack);
+                mL1.setPower(1);
+                mR1.setPower(1);
             }
             else if (leftRight > .2){ //goes left
-                mL1.setPower(leftRight);
-                mR1.setPower(-leftRight);
+                mL1.setPower(-1);
+                mR1.setPower(1);
             }
             else if (leftRight < -.2){ //goes right
-                mL1.setPower(leftRight);
-                mR1.setPower(-leftRight);
+                mL1.setPower(1);
+                mR1.setPower(-1);
             }
             else { //keeps robot still
                 mL1.setPower(0);
                 mR1.setPower(0);
+            }
+
+            if(gamepad1.dpad_down){
+                mL1.setPower(.3);
+                mR1.setPower(.3);
             }
 
             //arc turning
@@ -215,6 +220,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
             //GAMEPAD 2
 
             //nom control
+
+
             if(gamepad2.a) {
                 nom.setPower(1);
                 nomF.setPower(1);
@@ -264,8 +271,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 //            if(gamepad2.x && ziplineL.getPosition()==1) zipL = false;
 //            if(zipL) ziplineL.setPosition(1);
 //            else ziplineL.setPosition(0);
-//
-//            //door positions
+
+            if(gamepad2.b){
+                ziplineR.setPosition(.82);
+            }
+            else{
+                ziplineR.setPosition(0);
+            }
+
+            if(gamepad2.x){
+                ziplineL.setPosition(.18);
+            }
+            else{
+                ziplineL.setPosition(1);
+            }
+
+
+
+            //door positions
 //            if(gamepad2.y) door = !door;
 //            if(gamepad2.y && rightDoor.getPosition()==0 && leftDoor.getPosition()==0) door = true;
 //            if(gamepad2.y && rightDoor.getPosition()==.5 && leftDoor.getPosition()==.5) door = false;
@@ -275,6 +298,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 //            //left
 //            if(door) leftDoor.setPosition(.5);
 //            else leftDoor.setPosition(0);
+//
+            //kyles tries to do doors
+            if(gamepad1.b){
+                leftDoor.setPosition(0);
+            }
+            else{
+                leftDoor.setPosition(.7);
+            }
+            if(gamepad1.x){
+                rightDoor.setPosition(.5);
+            }
+            else{
+                rightDoor.setPosition(0);
+            }
+
 
 		/*
 		 * Send telemetry data back to driver station. Note that if we are using
@@ -283,7 +321,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 		 * are currently write only.
 		 *
 		 *
-		 * Kyle's stuff with triggers is on the Bottom
+		 *
 		 */
 //        telemetry.addData("Text", "*** Robot Data***");
 //            telemetry.addData("arm", "arm:  " + String.format("%.2f", armPosition));
