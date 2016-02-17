@@ -66,9 +66,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
         DcMotor pullup;
         DcMotor conveyor;
         DcMotor nomF;
+        double ziplineLV = 1;
+        double ziplineRV = 0;
         Servo ziplineL;
         Servo ziplineR;
         Servo pullupS;
+        double doorRV = 0;
+        double doorLV = .7;
         Servo rightDoor;
         Servo leftDoor;
 
@@ -76,9 +80,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
         double hangPos = .1;
         double maxChangeRate = .01;
 //        double motorChangeRate = .05;
-        boolean door = false;
-        boolean zipR = false;
-        boolean zipL = false;
+
         /**
          * Constructor
          */
@@ -261,57 +263,56 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
             }
 
             //zipline positions
-            //right
-//            if(gamepad2.b && ziplineR.getPosition()==0) zipR = true;
-//            if(gamepad2.b && ziplineR.getPosition()==1) zipR = false;
-//            if(zipR) ziplineR.setPosition(1);
-//            else ziplineR.setPosition(0);
-//            //left
-//            if(gamepad2.x && ziplineL.getPosition()==0) zipL = true;
-//            if(gamepad2.x && ziplineL.getPosition()==1) zipL = false;
-//            if(zipL) ziplineL.setPosition(1);
-//            else ziplineL.setPosition(0);
 
-            if(gamepad2.b){
-                ziplineR.setPosition(.82);
-            }
-            else{
-                ziplineR.setPosition(0);
-            }
+            //toggle code
+            if(gamepad2.b && ziplineR.getPosition() == 0) ziplineRV = .82;
+            if(gamepad2.b && ziplineR.getPosition() == .82) ziplineRV = 0;
+            ziplineR.setPosition(ziplineRV);
+            //press code
+//            if(gamepad2.b){
+//                ziplineR.setPosition(.82);
+//            }
+//            else{
+//                ziplineR.setPosition(0);
+//            }
 
-            if(gamepad2.x){
-                ziplineL.setPosition(.18);
-            }
-            else{
-                ziplineL.setPosition(1);
-            }
+            //toggle code
+            if(gamepad2.x && ziplineL.getPosition() == 1) ziplineLV = .18;
+            if(gamepad2.x && ziplineL.getPosition() == .18) ziplineLV = 1;
+            ziplineL.setPosition(ziplineLV);
+            //press code
+//            if(gamepad2.x){
+//                ziplineL.setPosition(.18);
+//            }
+//            else{
+//                ziplineL.setPosition(1);
+//            }
 
 
 
             //door positions
-//            if(gamepad2.y) door = !door;
-//            if(gamepad2.y && rightDoor.getPosition()==0 && leftDoor.getPosition()==0) door = true;
-//            if(gamepad2.y && rightDoor.getPosition()==.5 && leftDoor.getPosition()==.5) door = false;
-//            //right
-//            if(door) rightDoor.setPosition(.5);
-//            else rightDoor.setPosition(0);
-//            //left
-//            if(door) leftDoor.setPosition(.5);
-//            else leftDoor.setPosition(0);
-//
-            //kyles tries to do doors
-            if(gamepad1.b){
-                leftDoor.setPosition(0);
-            }
-            else{
-                leftDoor.setPosition(.7);
-            }
-            if(gamepad1.x){
-                rightDoor.setPosition(.5);
-            }
-            else{
-                rightDoor.setPosition(0);
-            }
+            //toggle
+            if(gamepad1.b && rightDoor.getPosition() == 0) doorRV = .5;
+            if(gamepad1.b && rightDoor.getPosition() == .5) doorRV = 0;
+            rightDoor.setPosition(doorRV);
+
+            if(gamepad1.x && leftDoor.getPosition() == .7) doorLV = 0;
+            if(gamepad1.x && leftDoor.getPosition() == 0) doorLV = .7;
+            leftDoor.setPosition(doorLV);
+
+            //press
+//            if(gamepad1.b){
+//                leftDoor.setPosition(0);
+//            }
+//            else{
+//                leftDoor.setPosition(.7);
+//            }
+//            if(gamepad1.x){
+//                rightDoor.setPosition(.5);
+//            }
+//            else{
+//                rightDoor.setPosition(0);
+//            }
 
 
 		/*
