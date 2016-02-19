@@ -76,8 +76,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
         Servo rightDoor;
         Servo leftDoor;
         Servo hook;
+        Servo arm;
        // boolean hooks = false;
-
+        boolean armPressed;
+        boolean armState;
+        double armPos1 =0;
+        double armPos2 =1;
         //values for the pullup
         double hangPos = .1;
         double maxChangeRate = .01;
@@ -130,6 +134,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
             leftDoor = hardwareMap.servo.get("leftDoor");
             ziplineL = hardwareMap.servo.get("ziplineL");
             ziplineR = hardwareMap.servo.get("ziplineR");
+            arm = hardwareMap.servo.get("arm");
 
             //setting motor directions
             mR1.setDirection(DcMotor.Direction.FORWARD);
@@ -335,16 +340,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
                 rightDoor.setPosition(0);
             }
 
-//            //hook
-//            if(gamepad1.a){
-//
-//                hooks =true;
-//
-//            }
-//
-//            if(hooks==true){
-//                hook.setPosition(.4);
-//            }
+            //toggle arm
+            if(gamepad1.y) armPressed = true;
+            else if(armPressed) {
+                armState = !armState;
+                armPressed = false;
+            }
+            if(armState) arm.setPosition(armPos1);
+            else arm.setPosition(armPos2);
 		/*
 		 * Send telemetry data back to driver station. Note that if we are using
 		 * a legacy NXT-compatible motor controller, then the getPower() method
