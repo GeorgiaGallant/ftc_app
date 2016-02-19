@@ -75,10 +75,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
         double doorLV = .7;
         Servo rightDoor;
         Servo leftDoor;
+        Servo hook;
+        boolean hooks = false;
 
         //values for the pullup
         double hangPos = .1;
         double maxChangeRate = .01;
+
 //        double motorChangeRate = .05;
 
         /**
@@ -140,6 +143,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
             rightDoor.setPosition(0);
             ziplineL.setPosition(1);
             ziplineR.setPosition(0);
+            hook.setPosition(0);
         }
         /*
          * This method will be called repeatedly in a loop
@@ -201,9 +205,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
                 mL1.setPower(.3);
                 mR1.setPower(.3);
             }
-            if(gamepad1.dpad_up){
+            if(gamepad1.y){
                 mL1.setPower(-.45);
                 mR1.setPower(-.45);
+            }
+
+            if(gamepad1.dpad_up){
+                mL1.setPower(-.80);
+                mR1.setPower(-.80);
+            }
+
+            if(gamepad1.a){
+                hook.setPosition(.55);
             }
 
 
@@ -266,15 +279,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
             else if (gamepad2.dpad_left){
                 conveyor.setPower(-.4);
             }
-
-
-            //conveyerbelt control fast
-            else if (gamepad2.right_trigger>.1){
-                conveyor.setPower(.8);
-            }
-            else if (gamepad2.left_trigger>.1){
-                conveyor.setPower(-.8);
-            }
             else{
                 conveyor.setPower(0);
             }
@@ -331,7 +335,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
                 rightDoor.setPosition(0);
             }
 
+            //hook
+            if(gamepad1.a){
 
+                hooks =true;
+
+            }
+
+            if(hooks==true){
+                hook.setPosition(.4);
+            }
 		/*
 		 * Send telemetry data back to driver station. Note that if we are using
 		 * a legacy NXT-compatible motor controller, then the getPower() method
