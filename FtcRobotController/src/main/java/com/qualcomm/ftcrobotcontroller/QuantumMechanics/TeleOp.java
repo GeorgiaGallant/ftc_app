@@ -76,7 +76,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
         Servo rightDoor;
         Servo leftDoor;
         Servo hook;
-        boolean hooks = false;
+       // boolean hooks = false;
 
         //values for the pullup
         double hangPos = .1;
@@ -335,16 +335,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
                 rightDoor.setPosition(0);
             }
 
-            //hook
-            if(gamepad1.a){
-
-                hooks =true;
-
-            }
-
-            if(hooks==true){
-                hook.setPosition(.4);
-            }
+//            //hook
+//            if(gamepad1.a){
+//
+//                hooks =true;
+//
+//            }
+//
+//            if(hooks==true){
+//                hook.setPosition(.4);
+//            }
 		/*
 		 * Send telemetry data back to driver station. Note that if we are using
 		 * a legacy NXT-compatible motor controller, then the getPower() method
