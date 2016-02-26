@@ -71,17 +71,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
         Servo ziplineL;
         Servo ziplineR;
         Servo pullupS;
-        double doorRV = 0;
-        double doorLV = .7;
+        //double doorRV = 0;
+       // double doorLV = .7;
         Servo rightDoor;
         Servo leftDoor;
-        Servo hook;
+
         Servo arm;
-       // boolean hooks = false;
-        boolean armPressed;
-        boolean armState;
-        double armPos1 =0;
-        double armPos2 =1;
+
+        boolean armPressed = false;
+        boolean armState = false;
+        double armPos1 =.30;
+        double armPos2 =.9;
         //values for the pullup
         double hangPos = .1;
         double maxChangeRate = .01;
@@ -145,10 +145,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
             //set servo positions
             leftDoor.setPosition(.8);
-            rightDoor.setPosition(0);
+            rightDoor.setPosition(.1);
             ziplineL.setPosition(1);
             ziplineR.setPosition(0);
-            hook.setPosition(0);
+            pullupS.setPosition(.5);
+            arm.setPosition(armPos2);
+
         }
         /*
          * This method will be called repeatedly in a loop
@@ -171,7 +173,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
             //naive driving
 
             //frontback controls the robot's front and back direction
-            float leftRight = gamepad1.left_stick_x;
+            float leftRight = gamepad1.right_stick_x;
             //leftright controls the robot's left and right direction
             float frontBack = gamepad1.left_stick_y;
 
@@ -183,7 +185,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
                 frontBack = 0;
             }
 
-            // write the values to the motors
+            // We aren't scaling motor values to decrease the chance of stalling the motors
+            //double frontBack is the y-axis values of the left stick to drive forwards and backwards
+            //double leftRight takes the x-axis values of the right stick to turn
             //gamepad 1
             if (frontBack >.2){ //go forward
                 mL1.setPower(-1);
@@ -220,9 +224,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
                 mR1.setPower(-.80);
             }
 
-            if(gamepad1.a){
-                hook.setPosition(.55);
-            }
 
 
             //arc turning
@@ -270,19 +271,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
                 pullup.setPower(0);
             }
 
+
+            //Using manual controls to position the tapemeasure during pullup until set positions are finalized
+            //Increases servo position by small increments so that loop makes servo move smoothly
             //manual pullupS control
-            if(hangPos>.95) hangPos=.95;
-            if(hangPos<.05) hangPos=.05;
+            if(hangPos>.8) hangPos=.8;
+            if(hangPos<.15) hangPos=.15;
             if (gamepad2.dpad_down) hangPos += maxChangeRate;
             else if (gamepad2.dpad_up) hangPos -= maxChangeRate;
             pullupS.setPosition(hangPos);
 
             //conveyerbelt control slow
             if (gamepad2.dpad_right){
-                conveyor.setPower(.4);
+                conveyor.setPower(.2);
             }
             else if (gamepad2.dpad_left){
-                conveyor.setPower(-.4);
+                conveyor.setPower(-.2);
             }
             else{
                 conveyor.setPower(0);
@@ -308,25 +312,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 //            ziplineL.setPosition(ziplineLV);
             //press code
             if(gamepad2.x){
-                ziplineL.setPosition(.18);
+                ziplineL.setPosition(.11);
             }
             else{
                 ziplineL.setPosition(1);
             }
 
-
-
-            //door positions
-            //toggle
-//            if(gamepad1.b && doorRV == 0) doorRV = .5;
-//            if(gamepad1.b && doorRV == .5) doorRV = 0;
-//            rightDoor.setPosition(doorRV);
-//
-//            if(gamepad1.x && doorLV == .7) doorLV = 0;
-//            if(gamepad1.x && doorLV == 0) doorLV = .7;
-//            leftDoor.setPosition(doorLV);
-
-            //press
+            //doors
             if(gamepad1.b){
                 leftDoor.setPosition(0);
             }
@@ -334,20 +326,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
                 leftDoor.setPosition(.7);
             }
             if(gamepad1.x){
-                rightDoor.setPosition(.5);
+                rightDoor.setPosition(.7);
             }
             else{
-                rightDoor.setPosition(0);
+                rightDoor.setPosition(.1);
             }
 
-            //toggle arm
-            if(gamepad1.y) armPressed = true;
+
+            //Switches state once "a" button is released
+            //toggle arm to hook onto pull-up bar to stop sliding
+            if(gamepad1.right_bumper) armPressed = true;
             else if(armPressed) {
                 armState = !armState;
                 armPressed = false;
             }
             if(armState) arm.setPosition(armPos1);
             else arm.setPosition(armPos2);
+
+
 		/*
 		 * Send telemetry data back to driver station. Note that if we are using
 		 * a legacy NXT-compatible motor controller, then the getPower() method

@@ -19,57 +19,77 @@ public class Autonomous extends LinearOpMode{
 
 
 
-    public Autonomous() {
+//    public Autonomous() {
+//
+//
+//
+//
+//        //   mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+//        //  mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+//        //        SensorManager.SENSOR_DELAY_FASTEST);
+//
+//
+//        /* gyro initialization */
+//        orientation = 0; //CHANGE BASED ON PROGRAM
+//        hasStarted = false;
+//        prevHeading = orientation;
+//
+//        systemTime = System.nanoTime();
+//        prevTime = systemTime;
+//        try {
+//            gyro = new AdafruitIMU(hardwareMap, "gyro" // find the gyro in the hardware map, called "gyro" - pretty good name right?
+//                    , (byte) (AdafruitIMU.BNO055_ADDRESS_A * 2)//By convention the FTC SDK always does 8-bit I2C bus
+//                    , (byte) AdafruitIMU.OPERATION_MODE_IMU);
+//        } catch (RobotCoreException e) {
+//           // Log.i("FtcRobotController", "Exception: " + e.getMessage());
+//            //idk but I can't find this class anywhere so let's not use it!
+//        }
+//
+//        systemTime = System.nanoTime();
+//        gyro.startIMU();//Set up the IMU as needed for a continual stream of I2C reads.
+//        telemetry.addData("FtcRobotController", "IMU Start method finished in: "
+//                + (-(systemTime - (systemTime = System.nanoTime()))) + " ns.");
+//
+//        Thread headingThread = new Thread() {
+//        // this might work in another thread and you should probably test this, bc it would be nice,
+//        // but basically you just
+//            //gotta be constantly updating your heading
+//            public void run() {
+//                while(true){
+//                    updateHeading();
+//                }
+//            }
+//        };
+//
+//        headingThread.start();
+//
+//        //hopefully reduces lag during initial autonomous
+//
+//
+//    }
+
+    Servo ziplineL;
+    Servo ziplineR;
+    Servo pullupS;
+    //double doorRV = 0;
+    // double doorLV = .7;
+    Servo rightDoor;
+    Servo leftDoor;
+
+    Servo arm;
 
 
+    DcMotor nomF;
+
+    boolean armPressed = false;
+    boolean armState = false;
+    double armPos1 =.385;
+    double armPos2 =.9;
+    //values for the pullup
+    double hangPos = .1;
+    double maxChangeRate = .01;
 
 
-        //   mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        //  mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-        //        SensorManager.SENSOR_DELAY_FASTEST);
-
-
-        /* gyro initialization */
-        orientation = 0; //CHANGE BASED ON PROGRAM
-        hasStarted = false;
-        prevHeading = orientation;
-
-        systemTime = System.nanoTime();
-        prevTime = systemTime;
-        try {
-            gyro = new AdafruitIMU(hardwareMap, "gyro" // find the gyro in the hardware map, called "gyro" - pretty good name right?
-                    , (byte) (AdafruitIMU.BNO055_ADDRESS_A * 2)//By convention the FTC SDK always does 8-bit I2C bus
-                    , (byte) AdafruitIMU.OPERATION_MODE_IMU);
-        } catch (RobotCoreException e) {
-           // Log.i("FtcRobotController", "Exception: " + e.getMessage());
-            //idk but I can't find this class anywhere so let's not use it!
-        }
-
-        systemTime = System.nanoTime();
-        gyro.startIMU();//Set up the IMU as needed for a continual stream of I2C reads.
-        telemetry.addData("FtcRobotController", "IMU Start method finished in: "
-                + (-(systemTime - (systemTime = System.nanoTime()))) + " ns.");
-
-        Thread headingThread = new Thread() {
-        // this might work in another thread and you should probably test this, bc it would be nice,
-        // but basically you just
-            //gotta be constantly updating your heading
-            public void run() {
-                while(true){
-                    updateHeading();
-                }
-            }
-        };
-
-        headingThread.start();
-
-        //hopefully reduces lag during initial autonomous
-
-
-    }
-
-    Servo climbers;
-    Servo pinion;
 
     DcMotor mL1;
     //  DcMotor mL2;
@@ -131,8 +151,7 @@ public class Autonomous extends LinearOpMode{
 
 
     private void driveTicks(double power, int ticks) throws InterruptedException{
-        climbers = hardwareMap.servo.get("climbers");
-        pinion = hardwareMap.servo.get("pinion");
+
         power = Math.abs(power); // Make sure power is positive
         if (ticks < 0) power *= -1;
         ticks = Math.abs(ticks);
@@ -157,6 +176,7 @@ public class Autonomous extends LinearOpMode{
 
         }
         drive(0); // Stop motors
+        wait1Msec(500);
 
     }
 
@@ -178,6 +198,8 @@ public class Autonomous extends LinearOpMode{
 
         }
         drive(0); // Stop motors
+        wait1Msec(500);
+
     }
 
     private void drive(double power) {
@@ -198,9 +220,10 @@ public class Autonomous extends LinearOpMode{
     }
 
     private int driveEncoders () {
+        telemetry.addData("ticks R", mR1.getCurrentPosition());
+        telemetry.addData("ticks L", mL1.getCurrentPosition());
+        return Math.abs(mR1.getCurrentPosition() - initPos);
 
-
-        return Math.abs(mR1.getCurrentPosition() - initPos) ;
     }
 
     void initCompassSensor() {
@@ -211,29 +234,38 @@ public class Autonomous extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
         mL1 = hardwareMap.dcMotor.get("mL1");
-        //   mL2 = hardwareMap.dcMotor.get("mL2");
-        // mL2 = hardwareMap.dcMotor.get("mL2");
-        //   mL3 = hardwareMap.dcMotor.get("mL3");
-
         mR1 = hardwareMap.dcMotor.get("mR1");
-        // mR2 = hardwareMap.dcMotor.get("mR2");
-        //   mR2 = hardwareMap.dcMotor.get("mR2");
-        //  mR3 = hardwareMap.dcMotor.get("mR3");
+        mL1.setDirection(DcMotor.Direction.REVERSE);
+        pullupS = hardwareMap.servo.get("pullupS");
+        rightDoor = hardwareMap.servo.get("rightDoor");
+        leftDoor = hardwareMap.servo.get("leftDoor");
+        ziplineL = hardwareMap.servo.get("ziplineL");
+        ziplineR = hardwareMap.servo.get("ziplineR");
+        arm = hardwareMap.servo.get("arm");
+        nomF = hardwareMap.dcMotor.get("nomF");
 
-
-        mR1.setDirection(DcMotor.Direction.REVERSE);
-        //  mR2.setDirection(DcMotor.Direction.REVERSE);
-
-        //    mL1.setDirection(DcMotor.Direction.REVERSE);
-        //   mL2.setDirection(DcMotor.Direction.REVERSE);
-
+        //set servo positions
+        leftDoor.setPosition(.8);
+        rightDoor.setPosition(.1);
+        ziplineL.setPosition(1);
+        ziplineR.setPosition(0);
+        pullupS.setPosition(.1);
+        arm.setPosition(armPos2);
         waitForStart();
 
-        turnTicks(.5, 50); //power is -1 to 1
+        wait1Msec(10000);
+        nomF.setPower(-1);
+        driveTicks(.8, 550);
+        turnTicks(.8, 1000);
+        driveTicks(.8, 7600);
+        turnTicks(.8, -1950);
+        nomF.setPower(0);
+        driveTicks(.8, -7000);
+
 
     }
 
-    private void turnDegrees (double power, int degrees) throws InterruptedException {
+ /*   private void turnDegrees (double power, int degrees) throws InterruptedException {
         power = Math.abs(power); // Make sure power is positive
         if (degrees < 0) power *=-1;
 
@@ -251,39 +283,7 @@ public class Autonomous extends LinearOpMode{
         drive(0); // Stop motors
     }
 
-
-    //get to bucket
-    //        driveTicks(-.5, 10650);
-    //        wait1Msec(200);
-
-
-
-    //turnTicks(.2, -1265);
-    //    sleep(200);
-
-
-    //   driveTicks(-.5, 9155);
-    //  sleep(200);
-
-
-
-    //go up
-    //pinion.setPosition(.35);
-    //        wait1Msec(1000);
-    //        pinion.setPosition(1);
-    //dumps climbers
-    // climbers.setPosition(.1);
-    //        wait1Msec(3000);
-    //        driveTicks(-.5, 250);
-    //        climbers.setPosition(.8);
-    //        wait1Msec(1000);
-    //        climbers.setPosition(.84);
-    //        wait1Msec(1000);
-    //        driveTicks(-.5, 100);
-    //        wait1Msec(500);
-    //        climbers.setPosition(.8);
-    //        wait1Msec(500);
-    //        climbers.setPosition(.84);
+*/
 
 
 
