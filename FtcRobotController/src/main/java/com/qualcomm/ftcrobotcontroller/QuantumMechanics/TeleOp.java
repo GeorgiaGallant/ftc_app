@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+
 /**
  * Created by student on 1/29/16.
  *
@@ -62,21 +63,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
         // TETRIX VALUES
         DcMotor mL1;
         DcMotor mR1;
-        DcMotor nom;
+     //   DcMotor nom;
         DcMotor pullup;
-        DcMotor conveyor;
-        DcMotor nomF;
+      //  DcMotor conveyor;
+       // DcMotor nomF;
         double ziplineLV = 1;
         double ziplineRV = 0;
-        Servo ziplineL;
-        Servo ziplineR;
+//        Servo ziplineL;
+//        Servo ziplineR;
         Servo pullupS;
         //double doorRV = 0;
-       // double doorLV = .7;
-        Servo rightDoor;
-        Servo leftDoor;
+//       // double doorLV = .7;
+//        Servo rightDoor;
+//        Servo leftDoor;
 
-        Servo arm;
+//        Servo arm;
 
         boolean armPressed = false;
         boolean armState = false;
@@ -123,33 +124,35 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
             //getting motors
             mL1 = hardwareMap.dcMotor.get("mL1");
             mR1 = hardwareMap.dcMotor.get("mR1");
-            nom = hardwareMap.dcMotor.get("nom");
+//            nom = hardwareMap.dcMotor.get("nom");
             pullup = hardwareMap.dcMotor.get("pullup");
-            conveyor = hardwareMap.dcMotor.get("conveyor");
-            nomF = hardwareMap.dcMotor.get("nomF");
-
-            //getting servos
+//            conveyor = hardwareMap.dcMotor.get("conveyor");
+//            nomF = hardwareMap.dcMotor.get("nomF");
+//
+//            //getting servos
             pullupS = hardwareMap.servo.get("pullupS");
-            rightDoor = hardwareMap.servo.get("rightDoor");
-            leftDoor = hardwareMap.servo.get("leftDoor");
-            ziplineL = hardwareMap.servo.get("ziplineL");
-            ziplineR = hardwareMap.servo.get("ziplineR");
-            arm = hardwareMap.servo.get("arm");
+//            rightDoor = hardwareMap.servo.get("rightDoor");
+//            leftDoor = hardwareMap.servo.get("leftDoor");
+//            ziplineL = hardwareMap.servo.get("ziplineL");
+//            ziplineR = hardwareMap.servo.get("ziplineR");
+//            arm = hardwareMap.servo.get("arm");
 
             //setting motor directions
             mR1.setDirection(DcMotor.Direction.FORWARD);
             mL1.setDirection(DcMotor.Direction.REVERSE);
-            nom.setDirection(DcMotor.Direction.REVERSE);
+//            nom.setDirection(DcMotor.Direction.REVERSE);
             pullup.setDirection(DcMotor.Direction.REVERSE);
-            conveyor.setDirection(DcMotor.Direction.FORWARD);
+//            conveyor.setDirection(DcMotor.Direction.FORWARD);
+//
+//            //set servo positions
+//            leftDoor.setPosition(.8);
+//            rightDoor.setPosition(.1);
+//            ziplineL.setPosition(1);
+//            ziplineR.setPosition(0);
 
-            //set servo positions
-            leftDoor.setPosition(.8);
-            rightDoor.setPosition(.1);
-            ziplineL.setPosition(1);
-            ziplineR.setPosition(0);
+
             pullupS.setPosition(.5);
-            arm.setPosition(armPos2);
+//            arm.setPosition(armPos2);
 
         }
         /*
@@ -248,18 +251,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
             //nom control
 
 
-            if(gamepad2.a) {
-                nom.setPower(1);
-                nomF.setPower(1);
-            }
-            else if(gamepad2.y) {
-                nomF.setPower(-1);
-            }
-            else{
-                nom.setPower(0);
-                nomF.setPower(0);
-            }
-
+//            if(gamepad2.a) {
+//                nom.setPower(1);
+//                nomF.setPower(1);
+//            }
+//            else if(gamepad2.y) {
+//                nomF.setPower(-1);
+//            }
+//            else{
+//                nom.setPower(0);
+//                nomF.setPower(0);
+//            }
+//
             //Do a pullup
             if(gamepad2.right_bumper) {
                 pullup.setPower(-.7);
@@ -270,79 +273,79 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
             else{
                 pullup.setPower(0);
             }
-
-
-            //Using manual controls to position the tapemeasure during pullup until set positions are finalized
-            //Increases servo position by small increments so that loop makes servo move smoothly
-            //manual pullupS control
+//
+//
+//            //Using manual controls to position the tapemeasure during pullup until set positions are finalized
+//            //Increases servo position by small increments so that loop makes servo move smoothly
+//            //manual pullupS control
             if(hangPos>.8) hangPos=.8;
             if(hangPos<.15) hangPos=.15;
             if (gamepad2.dpad_down) hangPos += maxChangeRate;
             else if (gamepad2.dpad_up) hangPos -= maxChangeRate;
             pullupS.setPosition(hangPos);
-
-            //conveyerbelt control slow
-            if (gamepad2.dpad_right){
-                conveyor.setPower(.2);
-            }
-            else if (gamepad2.dpad_left){
-                conveyor.setPower(-.2);
-            }
-            else{
-                conveyor.setPower(0);
-            }
-
-            //zipline positions
-
-           //toggle code
-//            if(gamepad2.b && ziplineRV==0) ziplineRV = .82;
-//            if(gamepad2.b && ziplineRV == .82) ziplineRV = 0;
-//            ziplineR.setPosition(ziplineRV);
-            //press code
-            if(gamepad2.b){
-                ziplineR.setPosition(.82);
-            }
-            else{
-                ziplineR.setPosition(0);
-            }
-
-            //toggle code
-//            if(gamepad2.x && ziplineLV == 1) ziplineLV = .18;
-//            if(gamepad2.x && ziplineLV == .18) ziplineLV = 1;
-//            ziplineL.setPosition(ziplineLV);
-            //press code
-            if(gamepad2.x){
-                ziplineL.setPosition(.11);
-            }
-            else{
-                ziplineL.setPosition(1);
-            }
-
-            //doors
-            if(gamepad1.b){
-                leftDoor.setPosition(0);
-            }
-            else{
-                leftDoor.setPosition(.7);
-            }
-            if(gamepad1.x){
-                rightDoor.setPosition(.7);
-            }
-            else{
-                rightDoor.setPosition(.1);
-            }
-
-
-            //Switches state once "a" button is released
-            //toggle arm to hook onto pull-up bar to stop sliding
-            if(gamepad1.right_bumper) armPressed = true;
-            else if(armPressed) {
-                armState = !armState;
-                armPressed = false;
-            }
-            if(armState) arm.setPosition(armPos1);
-            else arm.setPosition(armPos2);
-
+//
+//            //conveyerbelt control slow
+//            if (gamepad2.dpad_right){
+//                conveyor.setPower(.2);
+//            }
+//            else if (gamepad2.dpad_left){
+//                conveyor.setPower(-.2);
+//            }
+//            else{
+//                conveyor.setPower(0);
+//            }
+//
+//            //zipline positions
+//
+//           //toggle code
+////            if(gamepad2.b && ziplineRV==0) ziplineRV = .82;
+////            if(gamepad2.b && ziplineRV == .82) ziplineRV = 0;
+////            ziplineR.setPosition(ziplineRV);
+//            //press code
+//            if(gamepad2.b){
+//                ziplineR.setPosition(.82);
+//            }
+//            else{
+//                ziplineR.setPosition(0);
+//            }
+//
+//            //toggle code
+////            if(gamepad2.x && ziplineLV == 1) ziplineLV = .18;
+////            if(gamepad2.x && ziplineLV == .18) ziplineLV = 1;
+////            ziplineL.setPosition(ziplineLV);
+//            //press code
+//            if(gamepad2.x){
+//                ziplineL.setPosition(.11);
+//            }
+//            else{
+//                ziplineL.setPosition(1);
+//            }
+//
+//            //doors
+//            if(gamepad1.b){
+//                leftDoor.setPosition(0);
+//            }
+//            else{
+//                leftDoor.setPosition(.7);
+//            }
+//            if(gamepad1.x){
+//                rightDoor.setPosition(.7);
+//            }
+//            else{
+//                rightDoor.setPosition(.1);
+//            }
+//
+//
+//            //Switches state once "a" button is released
+//            //toggle arm to hook onto pull-up bar to stop sliding
+//            if(gamepad1.right_bumper) armPressed = true;
+//            else if(armPressed) {
+//                armState = !armState;
+//                armPressed = false;
+//            }
+//            if(armState) arm.setPosition(armPos1);
+//            else arm.setPosition(armPos2);
+//
 
 		/*
 		 * Send telemetry data back to driver station. Note that if we are using
