@@ -86,6 +86,8 @@ public class TeleOp extends OpMode {
     double hangPos = .5;
     double maxChangeRate = .01;
 
+    int encoderPos;
+
 //        double motorChangeRate = .05;
 
     /**
@@ -123,6 +125,7 @@ public class TeleOp extends OpMode {
         //getting motors
         mL1 = hardwareMap.dcMotor.get("mL1");
         mR1 = hardwareMap.dcMotor.get("mR1");
+        encoderPos = mR1.getCurrentPosition();
         nom = hardwareMap.dcMotor.get("nom");
         pullup = hardwareMap.dcMotor.get("pullup");
         conveyor = hardwareMap.dcMotor.get("conveyor");
@@ -219,6 +222,7 @@ public class TeleOp extends OpMode {
             mL1.setPower(-.80);
             mR1.setPower(-.80);
         }
+
 
 //            if(gamepad1.a){
 //                hook.setPosition(.55);
@@ -358,6 +362,7 @@ public class TeleOp extends OpMode {
 		 *
 		 *
 		 */
+        telemetry.addData("Encoder distance", mR1.getCurrentPosition() - encoderPos);
 //        telemetry.addData("Text", "*** Robot Data***");
 //            telemetry.addData("arm", "arm:  " + String.format("%.2f", armPosition));
 //        telemetry.addData("spool", "spool:  " + String.format("%.2f", spoolPosition));

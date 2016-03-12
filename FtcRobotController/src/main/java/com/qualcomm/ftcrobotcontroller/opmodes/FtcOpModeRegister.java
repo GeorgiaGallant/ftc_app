@@ -35,7 +35,7 @@ import android.content.Context;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
-
+import com.qualcomm.ftcrobotcontroller.QuantumMechanics.*;
 /**
  * Register Op Modes
  */
@@ -66,7 +66,9 @@ public class FtcOpModeRegister implements OpModeRegister {
 
     //Autonomous autonomous = new Autonomous(context);
 
-
+    manager.register("TeleOp", TeleOp.class);
+    manager.register("Autonomous", Auto2.class);
+    manager.register("Gyro Test", IMUTest.class);
     manager.register("NullOp", NullOp.class);
 
 
@@ -75,17 +77,17 @@ public class FtcOpModeRegister implements OpModeRegister {
 
     //manager.register("MatrixK9TeleOp", MatrixK9TeleOp.class);
 
-    manager.register("K9TeleOp", K9TeleOp.class);
-    manager.register("K9Line", K9Line.class);
-    manager.register ("PushBotAuto", PushBotAuto.class);
-    manager.register ("PushBotManual", PushBotManual.class);
+//    manager.register("K9TeleOp", K9TeleOp.class);
+//    manager.register("K9Line", K9Line.class);
+//    manager.register ("PushBotAuto", PushBotAuto.class);
+//    manager.register ("PushBotManual", PushBotManual.class);
 
 
 
     /*
      * Uncomment any of the following lines if you want to register an op mode.
      */
-    manager.register("MR Gyro Test", MRGyroTest.class);
+//    manager.register("MR Gyro Test", MRGyroTest.class);
 
     //manager.register("AdafruitRGBExample", AdafruitRGBExample.class);
     //manager.register("ColorSensorDriver", ColorSensorDriver.class);
