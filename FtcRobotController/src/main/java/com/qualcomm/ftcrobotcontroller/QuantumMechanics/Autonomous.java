@@ -221,7 +221,7 @@ public class Autonomous extends LinearOpMode{
         ziplineL = hardwareMap.servo.get("ziplineL");
         ziplineR = hardwareMap.servo.get("ziplineR");
         arm = hardwareMap.servo.get("arm");
-        nomF = hardwareMap.dcMotor.get("nomF");
+        nomF = hardwareMap.dcMotor.get("nom");
 
         //set servo positions
         leftDoor.setPosition(.8);
