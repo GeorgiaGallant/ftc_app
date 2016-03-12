@@ -67,7 +67,7 @@ public class FtcOpModeRegister implements OpModeRegister {
     //Autonomous autonomous = new Autonomous(context);
 
     manager.register("TeleOp", TeleOp.class);
-    manager.register("Autonomous", Auto2.class);
+//    manager.register("Autonomous", Auto2.class);
     manager.register("Gyro Test", IMUTest.class);
     manager.register("NullOp", NullOp.class);
 

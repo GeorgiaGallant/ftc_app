@@ -216,18 +216,18 @@ public class Autonomous extends LinearOpMode{
         mR1 = hardwareMap.dcMotor.get("mR1");
         mL1.setDirection(DcMotor.Direction.REVERSE);
         pullupS = hardwareMap.servo.get("pullupS");
-        rightDoor = hardwareMap.servo.get("rightDoor");
-        leftDoor = hardwareMap.servo.get("leftDoor");
-        ziplineL = hardwareMap.servo.get("ziplineL");
-        ziplineR = hardwareMap.servo.get("ziplineR");
+//        rightDoor = hardwareMap.servo.get("rightDoor");
+//        leftDoor = hardwareMap.servo.get("leftDoor");
+//        ziplineL = hardwareMap.servo.get("ziplineL");
+//        ziplineR = hardwareMap.servo.get("ziplineR");
         arm = hardwareMap.servo.get("arm");
-        nomF = hardwareMap.dcMotor.get("nom");
+        nomF = hardwareMap.dcMotor.get("nomF");
 
         //set servo positions
-        leftDoor.setPosition(.8);
-        rightDoor.setPosition(.1);
-        ziplineL.setPosition(1);
-        ziplineR.setPosition(0);
+//        leftDoor.setPosition(.8);
+//        rightDoor.setPosition(.1);
+//        ziplineL.setPosition(1);
+//        ziplineR.setPosition(0);
         pullupS.setPosition(.1);
         arm.setPosition(armPos2);
 
