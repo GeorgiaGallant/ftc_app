@@ -144,15 +144,15 @@ public class TeleOp extends OpMode {
          * Ziplines
          */
 
-        if (gamepad2.dpad_up) {
-            rightZipPos = INIT_RIGHT_POS;
+        if (gamepad2.left_trigger > .1) {
             leftZipPos = INIT_LEFT_POS;
+            rightZipPos = INIT_RIGHT_POS;
         }
         else if (gamepad2.dpad_left) {
-            leftZipPos++;
+            leftZipPos += .01;
         }
         else if (gamepad2.dpad_right) {
-            rightZipPos--;
+            rightZipPos -= .01;
         }
         leftZipPos = scaleServo(leftZipPos);
         rightZipPos = scaleServo(rightZipPos);
@@ -186,7 +186,7 @@ public class TeleOp extends OpMode {
         double cspeed = gamepad2.left_stick_x;
         cspeed = sign(cspeed) * Math.pow(cspeed, 4);
         cspeed = Math.abs(cspeed) > .1 ? cspeed : 0.0;
-        conveyor.setPower(cspeed/2);
+        conveyor.setPower(cspeed/4);
 
         /*
          * Hook
