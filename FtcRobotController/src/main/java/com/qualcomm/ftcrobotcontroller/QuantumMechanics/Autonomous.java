@@ -33,7 +33,7 @@ public class Autonomous extends LinearOpMode{
     Servo leftShield;
     Servo rightShield;
     static final double SHIELD_UP = 0;
-    static final double SHIELD_DOWN = .8;
+    static final double SHIELD_DOWN = .9;
 
     Servo aim;
     double doorRV = 0;
@@ -83,7 +83,7 @@ public class Autonomous extends LinearOpMode{
      * @param power
      * @param ticks Number of encoder ticks to travel
      */
-    public void driveTicksStraight(double power, int ticks) {
+    public void driveTicksStraight(double power, int ticks, int s) {
         int start = mL1.getCurrentPosition();
         power = scale(power);
         updateHeading();
@@ -98,8 +98,8 @@ public class Autonomous extends LinearOpMode{
 
             double error = orientation - initHeading;
 
-            pl+=error * error_const;
-            pr-=error * error_const;
+            pl-=error * error_const*s;
+            pr+=error * error_const*s;
 
             pl = scale(pl);
             pr = scale(pr);
@@ -125,14 +125,14 @@ public class Autonomous extends LinearOpMode{
             //Turn left until robot reaches the desiredHeading
             while (orientation+180 > desiredHeading+180) {
                 updateHeading();
-                drive(turnPower, -turnPower);
+                drive(-turnPower, turnPower);
             }
             drive(0);
         } else {
             //Turn right until robot reaches the desiredHeading
             while (orientation+180 < desiredHeading+180) {
                 updateHeading();
-                drive(-turnPower, turnPower);
+                drive(turnPower, -turnPower);
             }
             drive(0);
         }
@@ -263,8 +263,8 @@ public class Autonomous extends LinearOpMode{
         hook = hardwareMap.servo.get("arm");
         hook.setPosition(.6);
         //setting motor directions
-        mL1.setDirection(DcMotor.Direction.FORWARD);
-        mR1.setDirection(DcMotor.Direction.REVERSE);
+        mL1.setDirection(DcMotor.Direction.REVERSE);
+        mR1.setDirection(DcMotor.Direction.FORWARD);
         elevator.setDirection(DcMotor.Direction.REVERSE);
         pullup.setDirection(DcMotor.Direction.REVERSE);
         conveyor.setDirection(DcMotor.Direction.FORWARD);

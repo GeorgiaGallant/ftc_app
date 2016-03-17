@@ -29,7 +29,7 @@ public class TeleOp extends OpMode {
     Servo leftShield;
     Servo rightShield;
     static final double SHIELD_UP = 0;
-    static final double SHIELD_DOWN = .8;
+    static final double SHIELD_DOWN = .9;
 
     Servo aim;
     double doorRV = 0;
@@ -40,14 +40,14 @@ public class TeleOp extends OpMode {
     double armPos1 =.2;
     double armPos2 =.6;
     //values for the pullup
-    double hangPos = .5;
+    double hangPos = .2;
     double maxChangeRate = .01/2;
 
     static final double INIT_LEFT_POS = 0;
     static final double INIT_RIGHT_POS = .7;
 
     boolean shieldPressed;
-    boolean shieldDown = true;
+    boolean shieldDown = false;
 
     int encoderPos;
 
@@ -78,7 +78,7 @@ public class TeleOp extends OpMode {
         leftShield = hardwareMap.servo.get("leftShield");
         rightShield = hardwareMap.servo.get("rightShield");
 
-        moveShields(SHIELD_DOWN);
+        moveShields(SHIELD_UP);
         shieldPressed = false;
 
 
