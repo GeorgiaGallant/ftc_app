@@ -17,26 +17,43 @@ import com.qualcomm.robotcore.exception.RobotCoreException;
 
 
 public class Autonomous extends LinearOpMode{
-    Servo ziplineL;
-    Servo ziplineR;
-    Servo pullupS;
-    //double doorRV = 0;
-    // double doorLV = .7;
-    Servo rightDoor;
-    Servo leftDoor;
-    Servo arm;
-
-    DcMotor nomF;
-    boolean armPressed = false;
-    boolean armState = false;
-    double armPos1 =.385;
-    double armPos2 =.9;
-    //values for the pullup
-    double hangPos = .1;
-    double maxChangeRate = .01;
-
     DcMotor mL1;
     DcMotor mR1;
+    DcMotor elevator;
+    DcMotor pullup;
+    DcMotor conveyor;
+    DcMotor nom;
+
+    Servo leftZip;
+    Servo rightZip;
+    double leftZipPos;
+    double rightZipPos;
+
+
+    Servo leftShield;
+    Servo rightShield;
+    static final double SHIELD_UP = 0;
+    static final double SHIELD_DOWN = .8;
+
+    Servo aim;
+    double doorRV = 0;
+    double doorLV = .7;
+    Servo hook;
+    boolean armPressed;
+    boolean armState;
+    double armPos1 =.2;
+    double armPos2 =.6;
+    //values for the pullup
+    double hangPos = .5;
+    double maxChangeRate = .01/2;
+
+    static final double INIT_LEFT_POS = 0;
+    static final double INIT_RIGHT_POS = .7;
+
+    boolean shieldPressed;
+    boolean shieldDown = true;
+
+    int encoderPos;
     int initPos;
 
     //Nathaniel's Sensor Variables:
@@ -67,13 +84,13 @@ public class Autonomous extends LinearOpMode{
      * @param ticks Number of encoder ticks to travel
      */
     public void driveTicksStraight(double power, int ticks) {
-        int start = mR1.getCurrentPosition();
-
+        int start = mL1.getCurrentPosition();
+        power = scale(power);
         updateHeading();
         double initHeading = orientation;
-        double error_const = .04;
+        double error_const = .2;
 
-        while (Math.abs(mR1.getCurrentPosition() - start) < ticks) {
+        while (Math.abs(mL1.getCurrentPosition() - start) < ticks) {
             updateHeading();
             //gyro is too finicky to do integral stuff so just the basic derivative stuff
             double pl = power;
@@ -81,14 +98,21 @@ public class Autonomous extends LinearOpMode{
 
             double error = orientation - initHeading;
 
-            pl-=error * error_const;
-            pr+=error * error_const;
+            pl+=error * error_const;
+            pr-=error * error_const;
 
             pl = scale(pl);
             pr = scale(pr);
 
             drive(pl, pr);
-            telemetry.addData("m1:", Math.abs(mR1.getCurrentPosition() - start) - ticks);
+            telemetry.addData("m1:", Math.abs(mL1.getCurrentPosition() - start));
+//            telemetry.addData("heading", orientation);
+//            telemetry.addData("initial heading", initHeading);
+            telemetry.addData("Left Power", pl);
+            telemetry.addData("Right Power", pr);
+//            telemetry.addData("error", error);
+//            telemetry.addData("Adjustment", error*error_const);
+//            telemetry.addData("Right Power", pr);
         }
 
         drive(0);
@@ -133,9 +157,12 @@ public class Autonomous extends LinearOpMode{
     }
 
     double scale(double d) {
-        if (d > 1) return 1.0;
-        if (d < -1) return -1.0;
-        else return d;
+        if (d > 1.0)
+            return 1.0;
+        else if (d < -1.0)
+            return -1.0;
+        else
+            return d;
     }
 
     private void driveTicks(double power, int ticks) throws InterruptedException{
@@ -212,24 +239,41 @@ public class Autonomous extends LinearOpMode{
 
 
     public void setup() {
+        //getting motors
         mL1 = hardwareMap.dcMotor.get("mL1");
         mR1 = hardwareMap.dcMotor.get("mR1");
-        mL1.setDirection(DcMotor.Direction.REVERSE);
-        pullupS = hardwareMap.servo.get("pullupS");
-//        rightDoor = hardwareMap.servo.get("rightDoor");
-//        leftDoor = hardwareMap.servo.get("leftDoor");
-//        ziplineL = hardwareMap.servo.get("ziplineL");
-//        ziplineR = hardwareMap.servo.get("ziplineR");
-        arm = hardwareMap.servo.get("arm");
-        nomF = hardwareMap.dcMotor.get("nomF");
+        encoderPos = mR1.getCurrentPosition();
+        elevator = hardwareMap.dcMotor.get("nom");
+        pullup = hardwareMap.dcMotor.get("pullup");
+        conveyor = hardwareMap.dcMotor.get("conveyor");
+        nom = hardwareMap.dcMotor.get("nomF");
+        leftZip = hardwareMap.servo.get("leftZip");
+        rightZip = hardwareMap.servo.get("rightZip");
 
-        //set servo positions
-//        leftDoor.setPosition(.8);
-//        rightDoor.setPosition(.1);
-//        ziplineL.setPosition(1);
-//        ziplineR.setPosition(0);
-        pullupS.setPosition(.1);
-        arm.setPosition(armPos2);
+
+        leftShield = hardwareMap.servo.get("leftShield");
+        rightShield = hardwareMap.servo.get("rightShield");
+
+        moveShields(SHIELD_UP);
+        shieldPressed = false;
+
+
+        //getting servos
+        aim = hardwareMap.servo.get("pullupS");
+        hook = hardwareMap.servo.get("arm");
+        hook.setPosition(.6);
+        //setting motor directions
+        mL1.setDirection(DcMotor.Direction.FORWARD);
+        mR1.setDirection(DcMotor.Direction.REVERSE);
+        elevator.setDirection(DcMotor.Direction.REVERSE);
+        pullup.setDirection(DcMotor.Direction.REVERSE);
+        conveyor.setDirection(DcMotor.Direction.FORWARD);
+
+        leftZipPos = INIT_LEFT_POS;
+        rightZipPos = INIT_RIGHT_POS;
+
+        leftZip.setPosition(leftZipPos);
+        rightZip.setPosition(rightZipPos);
 
         systemTime = System.nanoTime();
         prevTime = systemTime;
@@ -246,19 +290,23 @@ public class Autonomous extends LinearOpMode{
         telemetry.addData("FtcRobotController", "IMU Start method finished in: "
                 + (-(systemTime - (systemTime = System.nanoTime()))) + " ns.");
     }
+    void moveShields(double pos) {
+        pos = scaleServo(pos);
+        leftShield.setPosition(pos);
+        rightShield.setPosition(1.0-pos);
+    }
+    double scaleServo(double d) {
+        if (d > 1.0)
+            return 1;
+        else if (d < 0.0)
+            return 0;
+        else
+            return d;
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
         setup();
         waitForStart();
-
-        sleep(1000);
-        nomF.setPower(-1);
-        driveTicks(.8, 550);
-        turnTicks(.8, 1000);
-        driveTicks(.8, 7600);
-        turnTicks(.8, -1950);
-        nomF.setPower(0);
-        driveTicks(.8, -7000);
     }
 }

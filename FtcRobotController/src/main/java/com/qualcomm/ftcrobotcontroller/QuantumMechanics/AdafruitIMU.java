@@ -566,7 +566,7 @@ public class AdafruitIMU implements HardwareDevice, I2cController.I2cPortReadyCa
                     + Math.pow(quaternionVector[2], 2.0)
                     + Math.pow(quaternionVector[3], 2.0);
             tempQuatRoll = 0.0;
-            tempRoll = 0.0;
+            tempRoll = -((double) tempR) / 16.0; //Correct for the fixed-point scaling and make tempPitch;
             //tempQuatPitch is the "theta" angle in the Tait-Bryan equations. It is converted from the range
             // [-pi/2 to +pi/2 radians] to the range [-90 to 90 degrees]. Warning: It is possible that
             // quantization errors in the 16-bit fixed-point quaternion values may generate an arcsine
@@ -607,6 +607,11 @@ public class AdafruitIMU implements HardwareDevice, I2cController.I2cPortReadyCa
             }
             roll[0] = 0.0;
             roll[1] = 0.0;
+
+            roll[0] = tempRoll - rollOffset[0];
+            roll[0] = (roll[0] > 90.0) ? 90.0 : ((roll[0] < -90.0) ? -90.0 : roll[0]);
+            roll[1] = tempQuatRoll - rollOffset[1];
+            roll[1] = (roll[1] > 90.0) ? 90.0 : ((roll[1] < -90.0) ? -90.0 : roll[1]);
             //Output pitch angles are offset-corrected and range-limited to -90 thru +90
             pitch[0] = tempPitch - pitchOffset[0];
             pitch[0] = (pitch[0] > 90.0) ? 90.0 : ((pitch[0] < -90.0) ? -90.0 : pitch[0]);

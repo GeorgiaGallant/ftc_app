@@ -8,6 +8,7 @@ public class Auto2 extends Autonomous{
   public void runOpMode() throws InterruptedException {
     setup();
     waitForStart();
-    driveTicksStraight(100, 1000);
+//    driveTicksStraight(.5, 10000);
+    rotateDegs(1, -90);
   }
 }
