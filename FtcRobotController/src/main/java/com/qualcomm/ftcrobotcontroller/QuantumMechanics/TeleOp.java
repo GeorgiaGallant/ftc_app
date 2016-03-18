@@ -51,6 +51,8 @@ public class TeleOp extends OpMode {
 
     int encoderPos;
 
+    boolean dab = false;
+
     //Nathaniel's Sensor Variables:
     double orientation = 0;
     boolean hasStarted = false;
@@ -85,7 +87,7 @@ public class TeleOp extends OpMode {
                 //getting servos
         aim = hardwareMap.servo.get("pullupS");
         hook = hardwareMap.servo.get("arm");
-
+        hook.setPosition(armPos2);
         //setting motor directions
         mL1.setDirection(DcMotor.Direction.FORWARD);
         mR1.setDirection(DcMotor.Direction.REVERSE);
@@ -140,6 +142,11 @@ public class TeleOp extends OpMode {
     @Override
     public void loop() {
         if (gyroBeenInit) updateHeading();
+
+        if (gamepad1.start || gamepad2.start) {
+            gyro.offsetsInitialized = false;
+        }
+
         /*
          * Driving
          */
@@ -269,7 +276,10 @@ public class TeleOp extends OpMode {
         if(armState) hook.setPosition(armPos1);
         else hook.setPosition(armPos2);
 
-        telemetry.addData("Encoder distance", mR1.getCurrentPosition() - encoderPos);
+        telemetry.addData("Encoder distance", mL1.getCurrentPosition() - encoderPos);
+        telemetry.addData("Heading", orientation);
+        telemetry.addData("Pitch", rollAngle[0]);
+        telemetry.addData("On Ramp?", onRamp());
     }
 
     boolean onRamp() {

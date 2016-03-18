@@ -241,7 +241,7 @@ public class AdafruitIMU implements HardwareDevice, I2cController.I2cPortReadyCa
     //the interface
     private final Lock i2cReadCacheLock;//A lock on access to the IMU's I2C read cache
     private final Lock i2cWriteCacheLock; //A lock on access to the IMU's I2C write cache
-    private boolean offsetsInitialized; //Flag indicating whether angle offsets have been
+    public boolean offsetsInitialized; //Flag indicating whether angle offsets have been
     // initialized at startup
     private double[] quaternionVector = new double[5];//4 vector components, plus the square ot the
     //vector magnitude (which should always be 1.0)
