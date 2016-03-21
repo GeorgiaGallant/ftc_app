@@ -134,17 +134,18 @@ public class TeleOp extends OpMode {
     }
     static final double MIN_POWER = .5;
     static final double SLOW_MODE = .3;
-    static final double RAMP_SPEED = .8;
+    static final double RAMP_SPEED = .85;
 
     boolean moveConveyor = false;
     int conveyorTicks = 0;
     double conveyorPow = 0.0;
     @Override
     public void loop() {
-        if (gyroBeenInit) updateHeading();
-
-        if (gamepad1.start || gamepad2.start) {
-            gyro.offsetsInitialized = false;
+        if (gyroBeenInit) {
+            updateHeading();
+            if (gamepad1.start || gamepad2.start) {
+                gyro.offsetsInitialized = false;
+            }
         }
 
         /*
@@ -224,7 +225,13 @@ public class TeleOp extends OpMode {
          * Ziplines
          */
 
-        if (gamepad2.left_trigger > .1) {
+        if (gamepad2.left_bumper) {
+            leftZipPos = INIT_LEFT_POS;
+        }
+        else if (gamepad2.right_bumper) {
+            rightZipPos = INIT_RIGHT_POS;
+        }
+        else if (gamepad2.left_trigger > .1) {
             leftZipPos = INIT_LEFT_POS;
             rightZipPos = INIT_RIGHT_POS;
         }
@@ -276,7 +283,9 @@ public class TeleOp extends OpMode {
         if(armState) hook.setPosition(armPos1);
         else hook.setPosition(armPos2);
 
-        telemetry.addData("Encoder distance", mL1.getCurrentPosition() - encoderPos);
+//        telemetry.addData("Encoder distance", mL1.getCurrentPosition() - encoderPos);
+        telemetry.addData("Left Motor Power", mL1.getPower());
+        telemetry.addData("Right Motor Power", mR1.getPower());
         telemetry.addData("Heading", orientation);
         telemetry.addData("Pitch", rollAngle[0]);
         telemetry.addData("On Ramp?", onRamp());

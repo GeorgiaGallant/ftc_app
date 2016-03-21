@@ -14,6 +14,9 @@ public abstract class RampAuto extends Autonomous{
     double speed = .3;
     setup();
     waitForStart();
+//    telemetry.addData("Waiting", "...");
+//    sleep(12000);
+//    telemetry.clearData();
     nom.setPower(-1);
     elevator.setPower(1);
     conveyor.setPower(1);
@@ -21,7 +24,7 @@ public abstract class RampAuto extends Autonomous{
     sleep(500);
     driveTicksStraight(speed, 1500, 1);
     sleep(500);
-    rotateDegs(1, 38*dir);
+    rotateDegs(1, 36*dir);
     updateHeading();
     sleep(500);
     driveTicksStraight(speed, 2500, 1);
@@ -32,7 +35,11 @@ public abstract class RampAuto extends Autonomous{
     mR1.setDirection(DcMotor.Direction.REVERSE);
     sleep(500);
     moveShields(SHIELD_UP);
+    elevator.setPower(0);
+    conveyor.setPower(0);
+    nom.setPower(0);
     sleep(500);
-    driveTicksStraight(.8, 6000, -1);
+    driveTicksStraight(.8, 7000, -1);
+    sleep(5000);
   }
 }

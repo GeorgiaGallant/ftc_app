@@ -5,14 +5,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 /**
  * Created by davis on 3/18/16.
  */
-public class GearedAuto extends Autonomous {
+public abstract class FloorAuto extends Autonomous {
   double speed = .3;
+  abstract double dir();
   public void runOpMode() throws InterruptedException {
     setup();
     waitForStart();
+    telemetry.addData("Waiting", "...");
+    sleep(12000);
+    telemetry.clearData();
     nom.setPower(-1);
     elevator.setPower(1);
-    conveyor.setPower(1);
+    conveyor.setPower(dir());
     moveShields(SHIELD_DOWN);
     sleep(500);
 
