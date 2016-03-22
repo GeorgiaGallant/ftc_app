@@ -53,7 +53,7 @@ public class TeleOp extends OpMode {
     AdafruitIMU gyro;
 
     boolean isTipping = false;
-
+    boolean pullupEngaged = false;
     /*
      * Constants
      */
@@ -126,6 +126,8 @@ public class TeleOp extends OpMode {
 
         /*
          * Anti-tipping
+         * After the robot tips by more than 30 degrees, drive backwards
+         * until we're on the floor. Override manual control during this time.
          */
         if (tipping()) {
             isTipping = true;
@@ -133,45 +135,43 @@ public class TeleOp extends OpMode {
         if (isTipping) {
             mL1.setPower(STUMBLE_SPEED);
             mR1.setPower(STUMBLE_SPEED);
+            leftZipPos = INIT_LEFT_POS;
+            rightZipPos = INIT_RIGHT_POS;
             if (onFloor())
                 isTipping = false;
-        }
-
-        /*
-         * Driving
-         */
-        double throttle = gamepad1.left_stick_y;
-        double turn = gamepad1.right_stick_x;
-
-        throttle = sign(throttle)*Math.pow(throttle,2);
-
-        if (gamepad1.dpad_up) {
-            mL1.setPower(RAMP_SPEED);
-            mR1.setPower(RAMP_SPEED);
-        }
-        else if (gamepad1.dpad_down) {
-            mL1.setPower(-RAMP_SPEED);
-            mR1.setPower(-RAMP_SPEED);
-        }
-        else if (gamepad1.y) {
-            mL1.setPower(SLOW_MODE);
-            mR1.setPower(SLOW_MODE);
-        }
-        else if (gamepad1.a) {
-            mL1.setPower(-SLOW_MODE);
-            mR1.setPower(-SLOW_MODE);
-        }
-        else if (Math.abs(turn) > MIN_POWER || Math.abs(throttle) > MIN_POWER) {
-            if (Math.abs(turn) > Math.abs(throttle)) {
-                mL1.setPower(turn);
-                mR1.setPower(-turn);
-            } else {
-                mL1.setPower(throttle);
-                mR1.setPower(throttle);
-            }
         } else {
-            mL1.setPower(0);
-            mR1.setPower(0);
+            /*
+             * Driving
+             */
+            double throttle = gamepad1.left_stick_y;
+            double turn = gamepad1.right_stick_x;
+
+            throttle = sign(throttle) * Math.pow(throttle, 2);
+
+            if (gamepad1.dpad_up) {
+                mL1.setPower(RAMP_SPEED);
+                mR1.setPower(RAMP_SPEED);
+            } else if (gamepad1.dpad_down) {
+                mL1.setPower(-RAMP_SPEED);
+                mR1.setPower(-RAMP_SPEED);
+            } else if (gamepad1.y) {
+                mL1.setPower(SLOW_MODE);
+                mR1.setPower(SLOW_MODE);
+            } else if (gamepad1.a) {
+                mL1.setPower(-SLOW_MODE);
+                mR1.setPower(-SLOW_MODE);
+            } else if (Math.abs(turn) > MIN_POWER || Math.abs(throttle) > MIN_POWER) {
+                if (Math.abs(turn) > Math.abs(throttle)) {
+                    mL1.setPower(turn);
+                    mR1.setPower(-turn);
+                } else {
+                    mL1.setPower(throttle);
+                    mR1.setPower(throttle);
+                }
+            } else {
+                mL1.setPower(0);
+                mR1.setPower(0);
+            }
         }
 
         /*
@@ -258,7 +258,10 @@ public class TeleOp extends OpMode {
         if(hangPos>.95) hangPos=.95;
         if(hangPos<.05) hangPos=.05;
         if (gamepad2.dpad_down) hangPos += AIM_SPEED;
-        else if (gamepad2.dpad_up) hangPos -= AIM_SPEED;
+        else if (gamepad2.dpad_up) {
+            hangPos -= AIM_SPEED;
+            pullupEngaged = true;
+        }
         aim.setPosition(hangPos);
 
         /*
@@ -272,12 +275,24 @@ public class TeleOp extends OpMode {
         if(armState) hook.setPosition(armPos1);
         else hook.setPosition(armPos2);
 
+        /*
+         * Telemetry
+         */
+        if (onFloor())
+            telemetry.addData("Situation", "On Floor");
+        else if (onRamp())
+            telemetry.addData("Situation", "On Ramp");
+        else if (tipping())
+            telemetry.addData("Situation", "Tipping");
+        else if (pullingUp())
+            telemetry.addData("Situation", "Pulling Up");
+
         telemetry.addData("Encoder distance", mL1.getCurrentPosition() - encoderPos);
         telemetry.addData("Left Motor Power", mL1.getPower());
         telemetry.addData("Right Motor Power", mR1.getPower());
         telemetry.addData("Heading", orientation);
         telemetry.addData("Pitch", rollAngle[0]);
-        telemetry.addData("On Ramp?", onRamp());
+
     }
 
     void moveShields(double pos) {
@@ -286,16 +301,18 @@ public class TeleOp extends OpMode {
         rightShield.setPosition(1.0-pos);
     }
 
+    boolean onFloor() {
+        return gyroBeenInit && Math.abs(rollAngle[0]) < 5;
+    }
     boolean onRamp() {
         return gyroBeenInit && rollAngle[0] < RAMP_MIN_ANGLE;
     }
 
     boolean tipping() {
-        return gyroBeenInit && rollAngle[0] < TIP_MIN_ANGLE;
+        return gyroBeenInit && !pullupEngaged && rollAngle[0] < TIP_MIN_ANGLE;
     }
-
-    boolean onFloor() {
-        return gyroBeenInit && Math.abs(rollAngle[0]) < 5;
+    boolean pullingUp() {
+        return gyroBeenInit && pullupEngaged && rollAngle[0] < TIP_MIN_ANGLE;
     }
 
     double scaleServo(double d) {
