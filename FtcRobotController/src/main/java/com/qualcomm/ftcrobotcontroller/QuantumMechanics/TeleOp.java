@@ -5,6 +5,7 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
@@ -19,21 +20,22 @@ public class TeleOp extends OpMode {
     DcMotor pullup;
     DcMotor conveyor;
     DcMotor nom;
+    int encoderPos;
+
+    DcMotorController drivetrain;
 
     Servo leftZip;
     Servo rightZip;
     double leftZipPos;
     double rightZipPos;
 
-
     Servo leftShield;
     Servo rightShield;
-    static final double SHIELD_UP = 0;
-    static final double SHIELD_DOWN = .9;
+
+    boolean shieldPressed;
+    boolean shieldDown = false;
 
     Servo aim;
-    double doorRV = 0;
-    double doorLV = .7;
     Servo hook;
     boolean armPressed;
     boolean armState;
@@ -41,27 +43,35 @@ public class TeleOp extends OpMode {
     double armPos2 =.6;
     //values for the pullup
     double hangPos = .2;
-    double maxChangeRate = .01/2;
 
-    static final double INIT_LEFT_POS = 0;
-    static final double INIT_RIGHT_POS = .7;
-
-    boolean shieldPressed;
-    boolean shieldDown = false;
-
-    int encoderPos;
-
-    boolean dab = false;
-
-    //Nathaniel's Sensor Variables:
     double orientation = 0;
-    boolean hasStarted = false;
     double prevHeading = 0;
     long systemTime = System.nanoTime();
     long prevTime = System.nanoTime();
 
     boolean gyroBeenInit = false;
     AdafruitIMU gyro;
+
+    boolean isTipping = false;
+
+    /*
+     * Constants
+     */
+    static final double AIM_SPEED = .01/2;
+
+    static final double INIT_LEFT_POS = 0;
+    static final double INIT_RIGHT_POS = .7;
+
+    static final double SHIELD_UP = 0;
+    static final double SHIELD_DOWN = .9;
+
+    static final double MIN_POWER = .5;
+    static final double SLOW_MODE = .3;
+    static final double RAMP_SPEED = .85;
+    static final double STUMBLE_SPEED  = -1.0;
+
+    static final double RAMP_MIN_ANGLE = -15;
+    static final double TIP_MIN_ANGLE = -30;
 
     @Override
     public void init() {
@@ -76,6 +86,7 @@ public class TeleOp extends OpMode {
         leftZip = hardwareMap.servo.get("leftZip");
         rightZip = hardwareMap.servo.get("rightZip");
 
+        drivetrain = hardwareMap.dcMotorController.get("Drivetrain");
 
         leftShield = hardwareMap.servo.get("leftShield");
         rightShield = hardwareMap.servo.get("rightShield");
@@ -104,41 +115,6 @@ public class TeleOp extends OpMode {
         initGyro();
     }
 
-    void initGyro() {
-        gyroBeenInit = true;
-        systemTime = System.nanoTime();
-        prevTime = systemTime;
-        try {
-            gyro = new AdafruitIMU(hardwareMap, "bno055"
-                    , (byte) (AdafruitIMU.BNO055_ADDRESS_A * 2)//By convention the FTC SDK always does 8-bit I2C bus
-                    , (byte) AdafruitIMU.OPERATION_MODE_IMU);
-        } catch (RobotCoreException e) {
-            Log.i("FtcRobotController", "Exception: " + e.getMessage());
-        }
-
-        systemTime = System.nanoTime();
-        gyro.startIMU();//Set up the IMU as needed for a continual stream of I2C reads.
-        telemetry.addData("FtcRobotController", "IMU Start method finished in: "
-                + (-(systemTime - (systemTime = System.nanoTime()))) + " ns.");
-    }
-
-    void moveShields(double pos) {
-        pos = scaleServo(pos);
-        leftShield.setPosition(pos);
-        rightShield.setPosition(1.0-pos);
-    }
-
-    double sign(double d) {
-        if (d >= 0) return 1;
-        else return -1;
-    }
-    static final double MIN_POWER = .5;
-    static final double SLOW_MODE = .3;
-    static final double RAMP_SPEED = .85;
-
-    boolean moveConveyor = false;
-    int conveyorTicks = 0;
-    double conveyorPow = 0.0;
     @Override
     public void loop() {
         if (gyroBeenInit) {
@@ -146,6 +122,19 @@ public class TeleOp extends OpMode {
             if (gamepad1.start || gamepad2.start) {
                 gyro.offsetsInitialized = false;
             }
+        }
+
+        /*
+         * Anti-tipping
+         */
+        if (tipping()) {
+            isTipping = true;
+        }
+        if (isTipping) {
+            mL1.setPower(STUMBLE_SPEED);
+            mR1.setPower(STUMBLE_SPEED);
+            if (onFloor())
+                isTipping = false;
         }
 
         /*
@@ -222,6 +211,14 @@ public class TeleOp extends OpMode {
         }
 
         /*
+         * Placement
+         */
+        double cspeed = gamepad2.left_stick_x;
+//        cspeed = sign(cspeed) * Math.pow(cspeed, 4);
+        cspeed = Math.abs(cspeed) > .2 ? cspeed : 0.0;
+        conveyor.setPower(cspeed/3);
+
+        /*
          * Ziplines
          */
 
@@ -260,17 +257,9 @@ public class TeleOp extends OpMode {
         //manual aim control
         if(hangPos>.95) hangPos=.95;
         if(hangPos<.05) hangPos=.05;
-        if (gamepad2.dpad_down) hangPos += maxChangeRate;
-        else if (gamepad2.dpad_up) hangPos -= maxChangeRate;
+        if (gamepad2.dpad_down) hangPos += AIM_SPEED;
+        else if (gamepad2.dpad_up) hangPos -= AIM_SPEED;
         aim.setPosition(hangPos);
-
-        /*
-         * Placement
-         */
-        double cspeed = gamepad2.left_stick_x;
-//        cspeed = sign(cspeed) * Math.pow(cspeed, 4);
-        cspeed = Math.abs(cspeed) > .2 ? cspeed : 0.0;
-        conveyor.setPower(cspeed/3);
 
         /*
          * Hook
@@ -283,7 +272,7 @@ public class TeleOp extends OpMode {
         if(armState) hook.setPosition(armPos1);
         else hook.setPosition(armPos2);
 
-//        telemetry.addData("Encoder distance", mL1.getCurrentPosition() - encoderPos);
+        telemetry.addData("Encoder distance", mL1.getCurrentPosition() - encoderPos);
         telemetry.addData("Left Motor Power", mL1.getPower());
         telemetry.addData("Right Motor Power", mR1.getPower());
         telemetry.addData("Heading", orientation);
@@ -291,8 +280,22 @@ public class TeleOp extends OpMode {
         telemetry.addData("On Ramp?", onRamp());
     }
 
+    void moveShields(double pos) {
+        pos = scaleServo(pos);
+        leftShield.setPosition(pos);
+        rightShield.setPosition(1.0-pos);
+    }
+
     boolean onRamp() {
-        return gyroBeenInit && rollAngle[0] < -15.0;
+        return gyroBeenInit && rollAngle[0] < RAMP_MIN_ANGLE;
+    }
+
+    boolean tipping() {
+        return gyroBeenInit && rollAngle[0] < TIP_MIN_ANGLE;
+    }
+
+    boolean onFloor() {
+        return gyroBeenInit && Math.abs(rollAngle[0]) < 5;
     }
 
     double scaleServo(double d) {
@@ -302,6 +305,10 @@ public class TeleOp extends OpMode {
             return 0;
         else
             return d;
+    }
+    double sign(double d) {
+        if (d >= 0) return 1;
+        else return -1;
     }
 
     //The following arrays contain both the Euler angles reported by the IMU (indices = 0) AND the
@@ -314,5 +321,23 @@ public class TeleOp extends OpMode {
             prevHeading = orientation;
             orientation = yawAngle[0];
         }
+    }
+
+    void initGyro() {
+        gyroBeenInit = true;
+        systemTime = System.nanoTime();
+        prevTime = systemTime;
+        try {
+            gyro = new AdafruitIMU(hardwareMap, "bno055"
+                    , (byte) (AdafruitIMU.BNO055_ADDRESS_A * 2)//By convention the FTC SDK always does 8-bit I2C bus
+                    , (byte) AdafruitIMU.OPERATION_MODE_IMU);
+        } catch (RobotCoreException e) {
+            Log.i("FtcRobotController", "Exception: " + e.getMessage());
+        }
+
+        systemTime = System.nanoTime();
+        gyro.startIMU();//Set up the IMU as needed for a continual stream of I2C reads.
+        telemetry.addData("FtcRobotController", "IMU Start method finished in: "
+                + (-(systemTime - (systemTime = System.nanoTime()))) + " ns.");
     }
 }
