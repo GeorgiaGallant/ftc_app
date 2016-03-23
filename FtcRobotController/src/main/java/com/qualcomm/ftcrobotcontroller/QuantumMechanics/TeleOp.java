@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 /**
  * TeleOp Mode
@@ -22,7 +23,7 @@ public class TeleOp extends OpMode {
     DcMotor nom;
     int encoderPos;
 
-    DcMotorController drivetrain;
+    VoltageSensor battery;
 
     Servo leftZip;
     Servo rightZip;
@@ -45,11 +46,13 @@ public class TeleOp extends OpMode {
     double hangPos = .2;
 
     double orientation = 0;
+    double pitch = 0;
     double prevHeading = 0;
     long systemTime = System.nanoTime();
     long prevTime = System.nanoTime();
 
     boolean gyroBeenInit = false;
+    boolean useGyro = true;
     AdafruitIMU gyro;
 
     boolean isTipping = false;
@@ -68,10 +71,11 @@ public class TeleOp extends OpMode {
     static final double MIN_POWER = .5;
     static final double SLOW_MODE = .3;
     static final double RAMP_SPEED = .85;
-    static final double STUMBLE_SPEED  = -1.0;
+    static final double STUMBLE_SPEED  = 1.0;
 
-    static final double RAMP_MIN_ANGLE = -15;
-    static final double TIP_MIN_ANGLE = -30;
+    static final double FLOOR_THRESHOLD = 5;
+    static final double RAMP_MIN_ANGLE = 15;
+    static final double TIP_MIN_ANGLE = 30;
 
     @Override
     public void init() {
@@ -86,7 +90,7 @@ public class TeleOp extends OpMode {
         leftZip = hardwareMap.servo.get("leftZip");
         rightZip = hardwareMap.servo.get("rightZip");
 
-        drivetrain = hardwareMap.dcMotorController.get("Drivetrain");
+        battery = hardwareMap.voltageSensor.get("Drivetrain");
 
         leftShield = hardwareMap.servo.get("leftShield");
         rightShield = hardwareMap.servo.get("rightShield");
@@ -117,24 +121,30 @@ public class TeleOp extends OpMode {
 
     @Override
     public void loop() {
-        if (gyroBeenInit) {
+        if (gyroBeenInit && useGyro) {
             updateHeading();
             if (gamepad1.start || gamepad2.start) {
                 gyro.offsetsInitialized = false;
             }
         }
+        if (gamepad1.right_trigger > .5)
+            useGyro = false;
 
         /*
          * Anti-tipping
          * After the robot tips by more than 30 degrees, drive backwards
          * until we're on the floor. Override manual control during this time.
          */
-        if (tipping()) {
+        if (tipping())
             isTipping = true;
-        }
+
         if (isTipping) {
-            mL1.setPower(STUMBLE_SPEED);
-            mR1.setPower(STUMBLE_SPEED);
+            /* if we're tipping forward, go backwards, and vice versa.
+               At the moment gyro is mounted backwards, so negative pitch (pitching forward)
+               means we'll move backwards (negative power to the motors)
+            */
+            mL1.setPower(STUMBLE_SPEED*sign(pitch));
+            mR1.setPower(STUMBLE_SPEED*sign(pitch));
             leftZipPos = INIT_LEFT_POS;
             rightZipPos = INIT_RIGHT_POS;
             if (onFloor())
@@ -222,6 +232,15 @@ public class TeleOp extends OpMode {
          * Ziplines
          */
 
+        if (gamepad2.dpad_left)
+            leftZipPos += .01;
+        else if (gamepad2.dpad_right)
+            rightZipPos -= .01;
+        else if (pullingUp()) { // if we're pulling up and no button is pressed, reset zipliners.
+            leftZipPos = INIT_LEFT_POS;
+            rightZipPos = INIT_RIGHT_POS;
+        }
+
         if (gamepad2.left_bumper) {
             leftZipPos = INIT_LEFT_POS;
         }
@@ -232,12 +251,7 @@ public class TeleOp extends OpMode {
             leftZipPos = INIT_LEFT_POS;
             rightZipPos = INIT_RIGHT_POS;
         }
-        else if (gamepad2.dpad_left) {
-            leftZipPos += .01;
-        }
-        else if (gamepad2.dpad_right) {
-            rightZipPos -= .01;
-        }
+        // Set the positions
         leftZipPos = scaleServo(leftZipPos);
         rightZipPos = scaleServo(rightZipPos);
         leftZip.setPosition(leftZipPos);
@@ -278,20 +292,34 @@ public class TeleOp extends OpMode {
         /*
          * Telemetry
          */
-        if (onFloor())
-            telemetry.addData("Situation", "On Floor");
-        else if (onRamp())
-            telemetry.addData("Situation", "On Ramp");
+        if (useGyro)
+            telemetry.addData("Gyro", "IN USE");
+        else
+            telemetry.addData("Gyro", "DEACTIVATED");
+
+        /*
+         Here, we want to know our situation whether or not the gyro is being used,
+         So we set it to true for the duration of these telemetry readings.
+         */
+        boolean temp = useGyro;
+        useGyro = true;
+        if (!gyroBeenInit)
+            telemetry.addData("Situation", "Unknown");
         else if (tipping())
             telemetry.addData("Situation", "Tipping");
         else if (pullingUp())
             telemetry.addData("Situation", "Pulling Up");
+        else if (onRamp())
+            telemetry.addData("Situation", "On Ramp");
+        else if (onFloor())
+            telemetry.addData("Situation", "On Floor");
+        useGyro = temp;
 
-        telemetry.addData("Encoder distance", mL1.getCurrentPosition() - encoderPos);
+//        telemetry.addData("Encoder distance", mL1.getCurrentPosition() - encoderPos);
         telemetry.addData("Left Motor Power", mL1.getPower());
         telemetry.addData("Right Motor Power", mR1.getPower());
         telemetry.addData("Heading", orientation);
-        telemetry.addData("Pitch", rollAngle[0]);
+        telemetry.addData("Pitch", pitch);
 
     }
 
@@ -302,17 +330,17 @@ public class TeleOp extends OpMode {
     }
 
     boolean onFloor() {
-        return gyroBeenInit && Math.abs(rollAngle[0]) < 5;
+        return useGyro && gyroBeenInit && Math.abs(pitch) < FLOOR_THRESHOLD;
     }
     boolean onRamp() {
-        return gyroBeenInit && rollAngle[0] < RAMP_MIN_ANGLE;
+        return useGyro && gyroBeenInit && Math.abs(pitch) > RAMP_MIN_ANGLE;
     }
 
     boolean tipping() {
-        return gyroBeenInit && !pullupEngaged && rollAngle[0] < TIP_MIN_ANGLE;
+        return useGyro && gyroBeenInit && !pullupEngaged && Math.abs(pitch) > TIP_MIN_ANGLE;
     }
     boolean pullingUp() {
-        return gyroBeenInit && pullupEngaged && rollAngle[0] < TIP_MIN_ANGLE;
+        return useGyro && gyroBeenInit && pullupEngaged && Math.abs(pitch) > TIP_MIN_ANGLE;
     }
 
     double scaleServo(double d) {
@@ -337,6 +365,7 @@ public class TeleOp extends OpMode {
             gyro.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
             prevHeading = orientation;
             orientation = yawAngle[0];
+            pitch = rollAngle[0];
         }
     }
 
