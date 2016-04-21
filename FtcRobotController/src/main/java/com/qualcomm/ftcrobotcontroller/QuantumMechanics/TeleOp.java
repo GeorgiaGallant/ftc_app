@@ -31,6 +31,11 @@ public class TeleOp extends OpMode {
     static final double SHIELD_UP = 0;
     static final double SHIELD_DOWN = .9;
 
+    Servo leftDoor;
+    Servo rightDoor;
+    static final double DOOR_UP = 0;
+    static final double DOOR_DOWN = .5;
+
     Servo aim;
     double doorRV = 0;
     double doorLV = .7;
@@ -75,6 +80,9 @@ public class TeleOp extends OpMode {
         nom = hardwareMap.dcMotor.get("nomF");
         leftZip = hardwareMap.servo.get("leftZip");
         rightZip = hardwareMap.servo.get("rightZip");
+
+        leftDoor = hardwareMap.servo.get("leftDoor");
+        rightDoor = hardwareMap.servo.get("rightDoor");
 
 
         leftShield = hardwareMap.servo.get("leftShield");
@@ -271,6 +279,16 @@ public class TeleOp extends OpMode {
 //        cspeed = sign(cspeed) * Math.pow(cspeed, 4);
         cspeed = Math.abs(cspeed) > .2 ? cspeed : 0.0;
         conveyor.setPower(cspeed/3);
+        if (Math.abs(cspeed) > 0 && gamepad2.left_stick_button) {
+            if (cspeed > 0)
+                leftDoor.setPosition(DOOR_DOWN);
+            else
+                leftDoor.setPosition(DOOR_UP);
+            if (cspeed < 0)
+                rightDoor.setPosition(DOOR_DOWN);
+            else
+                rightDoor.setPosition(DOOR_UP);
+        }
 
         /*
          * Hook
