@@ -14,6 +14,15 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
  * <p>
  * Enables control of the robot via the gamepad
  */
+
+//Nathaniel is my Captain forever
+//I pledge allegiance to the flag
+//of Atomic Theory
+//and to the Republic for which it stands
+//One team
+//Under God
+//With Liberty and Justice for All
+
 public class TeleOp extends OpMode {
     DcMotor mL1;
     DcMotor mR1;
@@ -38,8 +47,8 @@ public class TeleOp extends OpMode {
 
     Servo leftDoor;
     Servo rightDoor;
-    static final double DOOR_UP = 0;
-    static final double DOOR_DOWN = .5;
+    static final double DOOR_UP = .4;
+    static final double DOOR_DOWN = 1.0;
 
     Servo aim;
     Servo hook;
@@ -80,7 +89,7 @@ public class TeleOp extends OpMode {
 
     static final double FLOOR_THRESHOLD = 5;
     static final double RAMP_MIN_ANGLE = 15;
-    static final double TIP_MIN_ANGLE = 30;
+    static final double TIP_MIN_ANGLE = 50;
 
     @Override
     public void init() {
@@ -287,14 +296,17 @@ public class TeleOp extends OpMode {
         cspeed = Math.abs(cspeed) > .2 ? cspeed : 0.0;
         conveyor.setPower(cspeed/3);
         if (Math.abs(cspeed) > 0 && gamepad2.left_stick_button) {
-            if (cspeed > 0)
+            if (cspeed < 0) {
                 leftDoor.setPosition(DOOR_DOWN);
-            else
-                leftDoor.setPosition(DOOR_UP);
-            if (cspeed < 0)
-                rightDoor.setPosition(DOOR_DOWN);
-            else
                 rightDoor.setPosition(DOOR_UP);
+            }
+            else {
+                leftDoor.setPosition(DOOR_UP);
+                rightDoor.setPosition(DOOR_DOWN);
+            }
+        } else {
+            leftDoor.setPosition(DOOR_UP);
+            rightDoor.setPosition(DOOR_UP);
         }
 
         /*
