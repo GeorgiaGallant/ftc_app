@@ -36,6 +36,11 @@ public class TeleOp extends OpMode {
     boolean shieldPressed;
     boolean shieldDown = false;
 
+    Servo leftDoor;
+    Servo rightDoor;
+    static final double DOOR_UP = 0;
+    static final double DOOR_DOWN = .5;
+
     Servo aim;
     Servo hook;
     boolean armPressed;
@@ -91,6 +96,9 @@ public class TeleOp extends OpMode {
         rightZip = hardwareMap.servo.get("rightZip");
 
         battery = hardwareMap.voltageSensor.get("Drivetrain");
+        leftDoor = hardwareMap.servo.get("leftDoor");
+        rightDoor = hardwareMap.servo.get("rightDoor");
+
 
         leftShield = hardwareMap.servo.get("leftShield");
         rightShield = hardwareMap.servo.get("rightShield");
@@ -220,13 +228,6 @@ public class TeleOp extends OpMode {
             nom.setPower(0);
         }
 
-        /*
-         * Placement
-         */
-        double cspeed = gamepad2.left_stick_x;
-//        cspeed = sign(cspeed) * Math.pow(cspeed, 4);
-        cspeed = Math.abs(cspeed) > .2 ? cspeed : 0.0;
-        conveyor.setPower(cspeed/3);
 
         /*
          * Ziplines
@@ -277,6 +278,24 @@ public class TeleOp extends OpMode {
             pullupEngaged = true;
         }
         aim.setPosition(hangPos);
+
+        /*
+         * Placement
+         */
+        double cspeed = gamepad2.left_stick_x;
+//        cspeed = sign(cspeed) * Math.pow(cspeed, 4);
+        cspeed = Math.abs(cspeed) > .2 ? cspeed : 0.0;
+        conveyor.setPower(cspeed/3);
+        if (Math.abs(cspeed) > 0 && gamepad2.left_stick_button) {
+            if (cspeed > 0)
+                leftDoor.setPosition(DOOR_DOWN);
+            else
+                leftDoor.setPosition(DOOR_UP);
+            if (cspeed < 0)
+                rightDoor.setPosition(DOOR_DOWN);
+            else
+                rightDoor.setPosition(DOOR_UP);
+        }
 
         /*
          * Hook
