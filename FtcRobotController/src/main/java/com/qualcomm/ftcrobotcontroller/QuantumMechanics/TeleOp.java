@@ -124,7 +124,7 @@ public class TeleOp extends OpMode {
         mL1.setDirection(DcMotor.Direction.FORWARD);
         mR1.setDirection(DcMotor.Direction.REVERSE);
         elevator.setDirection(DcMotor.Direction.REVERSE);
-        pullup.setDirection(DcMotor.Direction.REVERSE);
+        pullup.setDirection(DcMotor.Direction.FORWARD);
         conveyor.setDirection(DcMotor.Direction.FORWARD);
 
         leftZipPos = INIT_LEFT_POS;
@@ -281,7 +281,10 @@ public class TeleOp extends OpMode {
         //manual aim control
         if(hangPos>.95) hangPos=.95;
         if(hangPos<.05) hangPos=.05;
-        if (gamepad2.dpad_down) hangPos += AIM_SPEED;
+        if (gamepad2.dpad_down) {
+            hangPos += AIM_SPEED;
+            pullupEngaged = true;
+        }
         else if (gamepad2.dpad_up) {
             hangPos -= AIM_SPEED;
             pullupEngaged = true;
@@ -304,7 +307,16 @@ public class TeleOp extends OpMode {
                 leftDoor.setPosition(DOOR_UP);
                 rightDoor.setPosition(DOOR_DOWN);
             }
-        } else {
+        }
+        else if (gamepad2.right_stick_x > .2) {
+            leftDoor.setPosition(DOOR_UP);
+            rightDoor.setPosition(DOOR_DOWN);
+        }
+        else if (gamepad2.right_stick_x < -.2) {
+            leftDoor.setPosition(DOOR_DOWN);
+            rightDoor.setPosition(DOOR_UP);
+        }
+        else {
             leftDoor.setPosition(DOOR_UP);
             rightDoor.setPosition(DOOR_UP);
         }
