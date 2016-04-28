@@ -5,7 +5,6 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
@@ -54,7 +53,7 @@ public class TeleOp extends OpMode {
     Servo hook;
     boolean armPressed;
     boolean armState;
-    double armPos1 =.2;
+    double armPos1 = 0;
     double armPos2 =.6;
     //values for the pullup
     double hangPos = .2;
@@ -79,8 +78,11 @@ public class TeleOp extends OpMode {
     static final double INIT_LEFT_POS = 0;
     static final double INIT_RIGHT_POS = .7;
 
-    static final double SHIELD_UP = 0;
-    static final double SHIELD_DOWN = .9;
+    static final double LEFT_SHIELD_UP = 0;
+    static final double LEFT_SHIELD_DOWN = .93;
+
+    static final double RIGHT_SHIELD_UP = 1;
+    static final double RIGHT_SHIELD_DOWN = .05;
 
     static final double MIN_POWER = .5;
     static final double SLOW_MODE = .3;
@@ -112,7 +114,7 @@ public class TeleOp extends OpMode {
         leftShield = hardwareMap.servo.get("leftShield");
         rightShield = hardwareMap.servo.get("rightShield");
 
-        moveShields(SHIELD_UP);
+        moveShields(LEFT_SHIELD_UP, RIGHT_SHIELD_UP);
         shieldPressed = false;
 
 
@@ -146,6 +148,8 @@ public class TeleOp extends OpMode {
         }
         if (gamepad1.right_trigger > .5)
             useGyro = false;
+        if (gamepad1.left_trigger > .5)
+            useGyro = true;
 
         /*
          * Anti-tipping
@@ -155,7 +159,7 @@ public class TeleOp extends OpMode {
         if (tipping())
             isTipping = true;
 
-        if (isTipping) {
+        if (useGyro && isTipping) {
             /* if we're tipping forward, go backwards, and vice versa.
                At the moment gyro is mounted backwards, so negative pitch (pitching forward)
                means we'll move backwards (negative power to the motors)
@@ -210,9 +214,9 @@ public class TeleOp extends OpMode {
             shieldDown = true;
 
         if (!shieldDown || onRamp())
-            moveShields(SHIELD_UP);
+            moveShields(LEFT_SHIELD_UP, RIGHT_SHIELD_UP);
         else
-            moveShields(SHIELD_DOWN);
+            moveShields(LEFT_SHIELD_DOWN, RIGHT_SHIELD_DOWN);
 
         /*
          * Pickup
@@ -272,7 +276,7 @@ public class TeleOp extends OpMode {
          */
         //Do a pullup
         double pup = gamepad2.right_stick_y;
-        if(Math.abs(pup) > .5) {
+        if(Math.abs(pup) > .5 && pullupEngaged) {
             pullup.setPower(pup);
         } else {
             pullup.setPower(0);
@@ -297,7 +301,7 @@ public class TeleOp extends OpMode {
         double cspeed = gamepad2.left_stick_x;
 //        cspeed = sign(cspeed) * Math.pow(cspeed, 4);
         cspeed = Math.abs(cspeed) > .2 ? cspeed : 0.0;
-        conveyor.setPower(cspeed/3);
+        conveyor.setPower(cspeed/4);
         if (Math.abs(cspeed) > 0 && gamepad2.left_stick_button) {
             if (cspeed < 0) {
                 leftDoor.setPosition(DOOR_DOWN);
@@ -308,11 +312,11 @@ public class TeleOp extends OpMode {
                 rightDoor.setPosition(DOOR_DOWN);
             }
         }
-        else if (gamepad2.right_stick_x > .2) {
+        else if (gamepad2.right_stick_x > .5) {
             leftDoor.setPosition(DOOR_UP);
             rightDoor.setPosition(DOOR_DOWN);
         }
-        else if (gamepad2.right_stick_x < -.2) {
+        else if (gamepad2.right_stick_x < -.5) {
             leftDoor.setPosition(DOOR_DOWN);
             rightDoor.setPosition(DOOR_UP);
         }
@@ -368,8 +372,14 @@ public class TeleOp extends OpMode {
 
     void moveShields(double pos) {
         pos = scaleServo(pos);
-        leftShield.setPosition(pos);
-        rightShield.setPosition(1.0-pos);
+        moveShields(pos, 1.0 - pos);
+    }
+
+    void moveShields(double l, double r) {
+        l = scaleServo(l);
+        r = scaleServo(r);
+        leftShield.setPosition(l);
+        rightShield.setPosition(r);
     }
 
     boolean onFloor() {

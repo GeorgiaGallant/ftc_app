@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * Created by davis on 3/18/16.
  */
 public abstract class FloorAuto extends Autonomous {
-  double speed = .3;
+  double speed = .5;
   abstract double dir();
   public void runOpMode() throws InterruptedException {
     setup();
