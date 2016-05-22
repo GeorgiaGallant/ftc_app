@@ -135,7 +135,7 @@ public class TeleOp extends OpMode {
         leftZip.setPosition(leftZipPos);
         rightZip.setPosition(rightZipPos);
 
-        initGyro();
+//        initGyro();
     }
 
     @Override
@@ -146,6 +146,12 @@ public class TeleOp extends OpMode {
                 gyro.offsetsInitialized = false;
             }
         }
+        if (gamepad1.start || gamepad2.start) {
+            pullupEngaged = false;
+        }
+
+        pullupEngaged = gamepad2.right_trigger > .5;
+
         if (gamepad1.right_trigger > .5)
             useGyro = false;
         if (gamepad1.left_trigger > .5)
@@ -261,10 +267,11 @@ public class TeleOp extends OpMode {
         else if (gamepad2.right_bumper) {
             rightZipPos = INIT_RIGHT_POS;
         }
-        else if (gamepad2.left_trigger > .1) {
+        if (gamepad2.left_trigger > .1) {
             leftZipPos = INIT_LEFT_POS;
             rightZipPos = INIT_RIGHT_POS;
         }
+
         // Set the positions
         leftZipPos = scaleServo(leftZipPos);
         rightZipPos = scaleServo(rightZipPos);
@@ -287,11 +294,9 @@ public class TeleOp extends OpMode {
         if(hangPos<.05) hangPos=.05;
         if (gamepad2.dpad_down) {
             hangPos += AIM_SPEED;
-            pullupEngaged = true;
         }
         else if (gamepad2.dpad_up) {
             hangPos -= AIM_SPEED;
-            pullupEngaged = true;
         }
         aim.setPosition(hangPos);
 
@@ -302,21 +307,11 @@ public class TeleOp extends OpMode {
 //        cspeed = sign(cspeed) * Math.pow(cspeed, 4);
         cspeed = Math.abs(cspeed) > .2 ? cspeed : 0.0;
         conveyor.setPower(cspeed/4);
-        if (Math.abs(cspeed) > 0 && gamepad2.left_stick_button) {
-            if (cspeed < 0) {
-                leftDoor.setPosition(DOOR_DOWN);
-                rightDoor.setPosition(DOOR_UP);
-            }
-            else {
-                leftDoor.setPosition(DOOR_UP);
-                rightDoor.setPosition(DOOR_DOWN);
-            }
-        }
-        else if (gamepad2.right_stick_x > .5) {
+        if (gamepad2.right_stick_x > .5 && !pullupEngaged) {
             leftDoor.setPosition(DOOR_UP);
             rightDoor.setPosition(DOOR_DOWN);
         }
-        else if (gamepad2.right_stick_x < -.5) {
+        else if (gamepad2.right_stick_x < -.5 && !pullupEngaged) {
             leftDoor.setPosition(DOOR_DOWN);
             rightDoor.setPosition(DOOR_UP);
         }
@@ -339,7 +334,7 @@ public class TeleOp extends OpMode {
         /*
          * Telemetry
          */
-        if (useGyro)
+        if (gyroBeenInit && useGyro)
             telemetry.addData("Gyro", "IN USE");
         else
             telemetry.addData("Gyro", "DEACTIVATED");
@@ -350,6 +345,9 @@ public class TeleOp extends OpMode {
          */
         boolean temp = useGyro;
         useGyro = true;
+
+        telemetry.addData("Pull up?", pullupEngaged ? "Yes" : "No");
+
         if (!gyroBeenInit)
             telemetry.addData("Situation", "Unknown");
         else if (tipping())

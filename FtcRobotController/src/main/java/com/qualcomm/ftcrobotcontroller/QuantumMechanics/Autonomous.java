@@ -78,6 +78,25 @@ public class Autonomous extends LinearOpMode{
         //        String.format("Euler= %4.5f", yawAngle[0]));
 
     }
+
+    public void driveStraight(double power, double initHeading, int s) {
+        double error_const = .2;
+        updateHeading();
+        //gyro is too finicky to do integral stuff so just the basic derivative stuff
+        double pl = power;
+        double pr = power;
+
+        double error = orientation - initHeading;
+
+        pl-=error * error_const*s;
+        pr+=error * error_const*s;
+
+        pl = scale(pl);
+        pr = scale(pr);
+
+        drive(pl, pr);
+    }
+
     /**
      * Drive forward until encoder tick threshold is met.
      * @param power
@@ -165,7 +184,7 @@ public class Autonomous extends LinearOpMode{
             return d;
     }
 
-    private void driveTicks(double power, int ticks) throws InterruptedException{
+    public void driveTicks(double power, int ticks) throws InterruptedException{
 
         power = Math.abs(power); // Make sure power is positive
         if (ticks < 0) power *= -1;
@@ -184,7 +203,6 @@ public class Autonomous extends LinearOpMode{
                 } else drive(power);
             }
 
-            waitOneFullHardwareCycle();
         }
         drive(0); // Stop motors
         sleep(500);
@@ -213,11 +231,11 @@ public class Autonomous extends LinearOpMode{
 
     }
 
-    private void drive(double power) {
+    public void drive(double power) {
         drive(power, power);
     }
 
-    private void drive (double lPower, double rPower) {
+    public void drive (double lPower, double rPower) {
         mL1.setPower(lPower);
         //    mL2.setPower(lPower);
         // mL2.setPower(lPower);
@@ -275,20 +293,20 @@ public class Autonomous extends LinearOpMode{
         leftZip.setPosition(leftZipPos);
         rightZip.setPosition(rightZipPos);
 
-        systemTime = System.nanoTime();
-        prevTime = systemTime;
-        try {
-            gyro = new AdafruitIMU(hardwareMap, "bno055"
-                    , (byte) (AdafruitIMU.BNO055_ADDRESS_A * 2)//By convention the FTC SDK always does 8-bit I2C bus
-                    , (byte) AdafruitIMU.OPERATION_MODE_IMU);
-        } catch (RobotCoreException e) {
-            Log.i("FtcRobotController", "Exception: " + e.getMessage());
-        }
-
-        systemTime = System.nanoTime();
-        gyro.startIMU();//Set up the IMU as needed for a continual stream of I2C reads.
-        telemetry.addData("FtcRobotController", "IMU Start method finished in: "
-                + (-(systemTime - (systemTime = System.nanoTime()))) + " ns.");
+//        systemTime = System.nanoTime();
+//        prevTime = systemTime;
+//        try {
+//            gyro = new AdafruitIMU(hardwareMap, "bno055"
+//                    , (byte) (AdafruitIMU.BNO055_ADDRESS_A * 2)//By convention the FTC SDK always does 8-bit I2C bus
+//                    , (byte) AdafruitIMU.OPERATION_MODE_IMU);
+//        } catch (RobotCoreException e) {
+//            Log.i("FtcRobotController", "Exception: " + e.getMessage());
+//        }
+//
+//        systemTime = System.nanoTime();
+//        gyro.startIMU();//Set up the IMU as needed for a continual stream of I2C reads.
+//        telemetry.addData("FtcRobotController", "IMU Start method finished in: "
+//                + (-(systemTime - (systemTime = System.nanoTime()))) + " ns.");
     }
     void moveShields(double pos) {
         pos = scaleServo(pos);

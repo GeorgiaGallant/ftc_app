@@ -7,12 +7,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  */
 public abstract class FloorAuto extends Autonomous {
   double speed = .5;
+  long DELAY = 1200;
   abstract double dir();
   public void runOpMode() throws InterruptedException {
     setup();
     waitForStart();
     telemetry.addData("Waiting", "...");
-    sleep(12000);
+    sleep(DELAY);
     telemetry.clearData();
     nom.setPower(-1);
     elevator.setPower(1);
@@ -20,26 +21,26 @@ public abstract class FloorAuto extends Autonomous {
     moveShields(SHIELD_DOWN);
     sleep(500);
 
-    driveTicksStraight(speed, 2000, 1);
+    driveTicks(speed, 2000);
     mL1.setDirection(DcMotor.Direction.FORWARD);
     mR1.setDirection(DcMotor.Direction.REVERSE);
     sleep(500);
-    driveTicksStraight(speed, 1000, -1);
+    driveTicks(speed, 1000);
     mL1.setDirection(DcMotor.Direction.REVERSE);
     mR1.setDirection(DcMotor.Direction.FORWARD);
     sleep(500);
-    driveTicksStraight(speed, 3000, 1);
+    driveTicks(speed, 3000);
     sleep(1000);
 
-    driveTicksStraight(speed, 2000, 1);
+    driveTicks(speed, 2000);
     mL1.setDirection(DcMotor.Direction.FORWARD);
     mR1.setDirection(DcMotor.Direction.REVERSE);
     sleep(500);
-    driveTicksStraight(speed, 1000, -1);
+    driveTicks(speed, 1000);
     mL1.setDirection(DcMotor.Direction.REVERSE);
     mR1.setDirection(DcMotor.Direction.FORWARD);
     sleep(500);
-    driveTicksStraight(speed, 3000, 1);
+    driveTicks(speed, 3000);
     sleep(1000);
 
   }

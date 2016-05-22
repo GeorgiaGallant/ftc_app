@@ -58,6 +58,7 @@ public class FtcOpModeRegister implements OpModeRegister {
      */
 
         manager.register("TeleOp", TeleOp.class);
+        manager.register("Defensive (aim the robot and let her rip)", DefAuto.class);
         manager.register("Floor Auto RED", FloorRed.class);
         manager.register("Floor Auto BLUE", FloorBlue.class);
         manager.register("Ramp Auto RED", RampRed.class);

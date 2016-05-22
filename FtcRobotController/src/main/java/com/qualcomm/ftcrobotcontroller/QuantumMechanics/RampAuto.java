@@ -22,24 +22,45 @@ public abstract class RampAuto extends Autonomous{
     conveyor.setPower(1);
     moveShields(SHIELD_DOWN);
     sleep(500);
-    driveTicksStraight(speed, 1500, 1);
+    driveTicksStraight(speed, 1500, 1); // drive straight
     sleep(500);
-    rotateDegs(1, 36*dir);
+    rotateDegs(1, 36 * dir); // turn right
     updateHeading();
     sleep(500);
-    driveTicksStraight(speed, 2500, 1);
+    driveTicksStraight(speed, 2500, 1); //go forward
     sleep(500);
-    rotateDegs(1, -80*dir);
+    rotateDegs(1, -80 * dir); // turn to face the ramp
     updateHeading();
     mL1.setDirection(DcMotor.Direction.FORWARD);
     mR1.setDirection(DcMotor.Direction.REVERSE);
     sleep(500);
-    moveShields(SHIELD_UP);
-    elevator.setPower(0);
+    moveShields(SHIELD_UP); // raise shields
+    elevator.setPower(0); // stop the stuff
     conveyor.setPower(0);
     nom.setPower(0);
     sleep(500);
-    driveTicksStraight(.8, 7000, -1);
+//    driveTicksStraight(.8, 7000, -1); // up the ramp
+
+    int start = mL1.getCurrentPosition();
+    updateHeading();
+    double initHeading = orientation;
+    boolean tipping = false;
+
+    while (!tipping && Math.abs(mL1.getCurrentPosition() - start) < 7000) {
+      driveStraight(.8, initHeading, -1);
+      if (Math.abs(pitchAngle[0]) > 50) {
+        tipping = true;
+//        break;
+      }
+    }
+    if (tipping) {
+      while (Math.abs(pitchAngle[0]) > 5) {
+        mL1.setPower(-1);
+        mR1.setPower(-1);
+      }
+
+    }
+
     sleep(5000);
   }
 }
